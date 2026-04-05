@@ -55,12 +55,6 @@ Use when:
 - Sharing data between different Rust compilation artifacts
 - Dealing with portable vs non-portable data types across DLL boundaries
 
-#### 5. `05_library_guidelines.md`
-Use when creating or modifying **Rust libraries**, including:
-- Structuring a crate
-- Designing public APIs
-- Dependency decisions
-
 #### 6. `06_performance_guidelines.md`
 Use when:
 - Identifying and profiling hot paths in your code
@@ -121,4 +115,3 @@ Use when:
 4. Load `03_documentation.md` when you need to write documentation.
 5. Comments must ALWAYS be written in American English, unless the user explicitly requests ‘write comments in French’ or provides another clear instruction specifying a different comment language.
 6. If the file is fully compliant, add a comment: `// Rust guideline compliant {date}` where `{date}` is the **Current compliance date** shown at the top of this document.
----
