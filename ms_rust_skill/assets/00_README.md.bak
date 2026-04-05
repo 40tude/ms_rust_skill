@@ -1,0 +1,25 @@
+<!-- Copyright (c) Microsoft Corporation. Licensed under the MIT license. -->
+
+# Pragmatic Rust Guidelines
+
+This file contains all guidelines concatenated for easy reference.
+
+
+
+# Rust Guidelines - Index
+
+Bienvenue dans les guidelines pragmatiques Rust (Microsoft).
+
+## Navigation rapide
+
+- [AI Guidelines](./01_ai-guidelines.md) - Design pour les agents
+- [Application Guidelines](./02_application-guidelines.md) - Patterns au niveau appli
+- [Documentation](./03_documentation.md) - Comment documenter le code
+- [Error Handling](./04_error-handling.md) - Gestion des erreurs
+- ... etc
+
+## Utilisation avec Claude Code
+
+Cherche la section pertinente :
+- `/search "builder" 09_initialization-patterns.md`
+- `/read 03_documentation.md` (lecture complète, petit fichier)
