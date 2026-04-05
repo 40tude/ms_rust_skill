@@ -1,4 +1,4 @@
-# Libraries / Interoperability Guidelines
+﻿# Libraries / Interoperability Guidelines
 
 
 
@@ -153,12 +153,7 @@ async fn foo() {
 > "reinvent the world" to get anything done in a thread-per-core universe.
 >
 > The good news is, in most cases atomics and uncontended locks only have a measurable impact if accessed more frequently than every 64 words or so.
->
-> <div style="background-color:white;">
->
-> ![TEXT](M-TYPES-SEND.png)
->
-> </div>
+<!-- Read the violin diagram online at: https://microsoft.github.io/rust-guidelines/guidelines/libs/interop/index.html -->
 >
 > Working with a large `Vec<AtomicUsize>` in a hot loop is a bad idea, but doing the occasional uncontended atomic operation from otherwise thread-per-core
 > async code has no performance impact, but gives you widespread ecosystem compatibility.

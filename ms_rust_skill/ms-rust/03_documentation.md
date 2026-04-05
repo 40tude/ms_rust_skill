@@ -1,4 +1,4 @@
-# Documentation
+﻿# Documentation
 
 
 
@@ -65,7 +65,11 @@ fn copy(src: File, dst: File) {}
 When publicly re-exporting crate items via `pub use foo::Foo` or `pub use foo::*`, they show up in an opaque re-export block. In most cases, this is not
 helpful to the reader:
 
-![TEXT](M-DOC-INLINE_BAD.png)
+```
+Re-Exports
+----------
+pub use view::*;
+```
 
 Instead, you should annotate them with `#[doc(inline)]` at the `use` site, for them to be inlined organically:
 
@@ -80,7 +84,9 @@ pub use foo::*;
 pub use foo::Foo;
 ```
 
-![TEXT](M-DOC-INLINE_GOOD.png)
+```
+View -- A view over a configuration of type T, containing data for a specific context.
+```
 
 This does not apply to `std` or 3rd party types; these should always be re-exported without inlining to make it clear they are external.
 
@@ -112,11 +118,31 @@ exceed to keep things tidy on most screens.
 
 If you keep things in a line, your docs will become easily skimmable. Compare, for example, the standard library:
 
-![TEXT](M-FIRST-DOC-SENTENCE_GOOD.png)
+| Module     | Description                                                                 |
+|------------|-----------------------------------------------------------------------------|
+| alloc      | Memory allocation APIs.                                                     |
+| any        | Utilities for dynamic typing or type reflection.                            |
+| arch       | SIMD and vendor intrinsics module.                                          |
+| array      | Utilities for the array primitive type.                                     |
+| ascii      | Operations on ASCII strings and characters.                                 |
+| backtrace  | Support for capturing a stack backtrace of an OS thread.                    |
+| borrow     | A module for working with borrowed data.                                    |
+| boxed      | The `Box<T>` type for heap allocation.                                      |
+| cell       | Shareable mutable containers.                                               |
+| char       | Utilities for the `char` primitive type.                                    |
+| clone      | The `Clone` trait for types that cannot be 'implicitly copied'.             |
+| cmp        | Utilities for comparing and ordering values.                                |
 
 Otherwise, you might end up with _widows_ and a generally unpleasant reading flow:
 
-![TEXT](M-FIRST-DOC-SENTENCE_BAD.png)
+| Item                          | Description                                                                 |
+|-------------------------------|-----------------------------------------------------------------------------|
+| DuplicateKeysError            | If you try to merge two Contexts together which have duplicate keys, this is the error you get. |
+| Fragment                      | Contains a single layer of configuration data (from one source) which can be merged with data from other sources to yield a merged fragment to be deserialized into a concrete configuration type. |
+| InternalContractViolationError| An error that signals some internal API contract or logical precondition was violated. |
+| MergedContext                 |                                                                             |
+| Snapshot                      | A snapshot of a config value T, allowing the value to be read. This type transparently takes care of resource management concerns required to expose the values efficiently. |
+| View                          | A view over a configuration of type T, containing data for a specific context. |
 
 As a rule of thumb, the first sentence should not exceed **15 words**.
 

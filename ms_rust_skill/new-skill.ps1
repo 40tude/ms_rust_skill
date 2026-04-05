@@ -10,6 +10,84 @@ if (-not $scriptDir) { $scriptDir = Get-Location }
 $inDir = Join-Path $scriptDir 'in'
 $outDir = Join-Path $scriptDir 'ms-rust'
 
+# ---------------------------------------------------------------------------
+# Image-to-text replacement rules
+# ---------------------------------------------------------------------------
+# To add a new replacement in the future:
+#   1. Append a new hashtable to $ImageReplacements below.
+#   2. Set File to the exact output filename (e.g. '03_documentation.md').
+#   3. Set Old to the exact text to find (use @'...'@ for multi-line).
+#   4. Set New to the replacement text   (use @'...'@ for multi-line).
+# ---------------------------------------------------------------------------
+$ImageReplacements = @(
+    @{
+        File = '10_libraries_interoperability_guidelines.md'
+        Old  = @'
+>
+> <div style="background-color:white;">
+>
+> ![TEXT](M-TYPES-SEND.png)
+>
+> </div>
+'@
+        New  = '<!-- Read the violin diagram online at: https://microsoft.github.io/rust-guidelines/guidelines/libs/interop/index.html -->'
+    },
+    @{
+        File = '03_documentation.md'
+        Old  = '![TEXT](M-DOC-INLINE_BAD.png)'
+        New  = @'
+```
+Re-Exports
+----------
+pub use view::*;
+```
+'@
+    },
+    @{
+        File = '03_documentation.md'
+        Old  = '![TEXT](M-DOC-INLINE_GOOD.png)'
+        New  = @'
+```
+View -- A view over a configuration of type T, containing data for a specific context.
+```
+'@
+    },
+    @{
+        File = '03_documentation.md'
+        Old  = '![TEXT](M-FIRST-DOC-SENTENCE_GOOD.png)'
+        New  = @'
+| Module     | Description                                                                 |
+|------------|-----------------------------------------------------------------------------|
+| alloc      | Memory allocation APIs.                                                     |
+| any        | Utilities for dynamic typing or type reflection.                            |
+| arch       | SIMD and vendor intrinsics module.                                          |
+| array      | Utilities for the array primitive type.                                     |
+| ascii      | Operations on ASCII strings and characters.                                 |
+| backtrace  | Support for capturing a stack backtrace of an OS thread.                    |
+| borrow     | A module for working with borrowed data.                                    |
+| boxed      | The `Box<T>` type for heap allocation.                                      |
+| cell       | Shareable mutable containers.                                               |
+| char       | Utilities for the `char` primitive type.                                    |
+| clone      | The `Clone` trait for types that cannot be 'implicitly copied'.             |
+| cmp        | Utilities for comparing and ordering values.                                |
+'@
+    },
+    @{
+        File = '03_documentation.md'
+        Old  = '![TEXT](M-FIRST-DOC-SENTENCE_BAD.png)'
+        New  = @'
+| Item                          | Description                                                                 |
+|-------------------------------|-----------------------------------------------------------------------------|
+| DuplicateKeysError            | If you try to merge two Contexts together which have duplicate keys, this is the error you get. |
+| Fragment                      | Contains a single layer of configuration data (from one source) which can be merged with data from other sources to yield a merged fragment to be deserialized into a concrete configuration type. |
+| InternalContractViolationError| An error that signals some internal API contract or logical precondition was violated. |
+| MergedContext                 |                                                                             |
+| Snapshot                      | A snapshot of a config value T, allowing the value to be read. This type transparently takes care of resource management concerns required to expose the values efficiently. |
+| View                          | A view over a configuration of type T, containing data for a specific context. |
+'@
+    }
+)
+
 # Helper: produce a short relative path for nicer output
 function Get-ShortPath([string]$path) {
     try {
@@ -18,8 +96,41 @@ function Get-ShortPath([string]$path) {
             if ($rel.StartsWith('\') -or $rel.StartsWith('/')) { $rel = $rel.Substring(1) }
             return $rel
         }
-    } catch { }
+    }
+    catch { }
     return $path
+}
+
+# Apply all entries in $ImageReplacements to files in $targetDir.
+# Normalizes line endings to LF for matching, then writes back with CRLF.
+function Invoke-ImageReplacements {
+    param([string]$targetDir)
+
+    foreach ($rule in $ImageReplacements) {
+        $filePath = Join-Path $targetDir $rule.File
+        if (-not (Test-Path $filePath)) {
+            Write-Warning "Replacement target not found: $($rule.File) -- skipping"
+            continue
+        }
+
+        $raw = Get-Content -Raw -LiteralPath $filePath
+        $rawLF = $raw -replace '\r\n', "`n" -replace '\r', "`n"
+        # Trim trailing newlines that PowerShell here-strings always append,
+        # so surrounding line endings in the file are not consumed.
+        $oldLF = ($rule.Old -replace '\r\n', "`n" -replace '\r', "`n").TrimEnd("`n")
+        $newLF = ($rule.New -replace '\r\n', "`n" -replace '\r', "`n").TrimEnd("`n")
+
+        if (-not $rawLF.Contains($oldLF)) {
+            $preview = ($oldLF -split "`n")[0]
+            Write-Warning ("Pattern not found in {0}: {1}" -f $rule.File, $preview)
+            continue
+        }
+
+        $resultLF = $rawLF.Replace($oldLF, $newLF)
+        $result = $resultLF -replace "`n", "`r`n"
+        [System.IO.File]::WriteAllText($filePath, $result, [System.Text.Encoding]::UTF8)
+        Write-Host ("  patched: {0} (replaced: {1})" -f $rule.File, ($oldLF -split "`n")[0])
+    }
 }
 
 # Determine input path
@@ -29,10 +140,12 @@ if (-not $InputFile) {
         Write-Error "Default input file not found: $inputPath"
         exit 1
     }
-} else {
+}
+else {
     if (Test-Path $InputFile) {
         $inputPath = (Resolve-Path -LiteralPath $InputFile).ProviderPath
-    } else {
+    }
+    else {
         # Try in/ directory and common extensions
         $candidate = Join-Path $inDir $InputFile
         if (Test-Path $candidate) { $inputPath = $candidate }
@@ -54,10 +167,12 @@ if (-not $InputFile) {
 if (Test-Path $outDir) {
     try {
         Get-ChildItem -Path $outDir -Force | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
-    } catch {
+    }
+    catch {
         Write-Warning ("Failed to fully clear {0}: {1}" -f $outDir, $_)
     }
-} else {
+}
+else {
     New-Item -Path $outDir -ItemType Directory | Out-Null
 }
 
@@ -104,7 +219,7 @@ for ($k = 0; $k -lt ($sepIndices.Count - 1); $k++) {
         $extractLines = $extractLines | Where-Object { -not ($_ -match '^---') }
 
         # Get title from first line
-        $titleLine = $extractLines[0] -replace '^[ \t]*#\s+','' -replace '\s+$',''
+        $titleLine = $extractLines[0] -replace '^[ \t]*#\s+', '' -replace '\s+$', ''
         # Normalize and sanitize filename base:
         # - lowercase, trim
         # - replace one-or-more spaces or '/' by a single '_'
@@ -130,8 +245,13 @@ for ($k = 0; $k -lt ($sepIndices.Count - 1); $k++) {
     }
 }
 
-    $shortOutDir = Get-ShortPath $outDir
-    Write-Host "Done. Generated $(( $fileCounter - 1 )) file(s) in: $shortOutDir"
+$shortOutDir = Get-ShortPath $outDir
+Write-Host "Done. Generated $(( $fileCounter - 1 )) file(s) in: $shortOutDir"
+
+# Apply image-to-text replacements
+Write-Host "Applying image-to-text replacements..."
+Invoke-ImageReplacements -targetDir $outDir
+Write-Host "Replacements done."
 
 # Copy SKILL.md from input directory to output directory, if present
 $skillSrc = Join-Path $inDir 'SKILL.md'
@@ -142,10 +262,12 @@ if (Test-Path $skillSrc) {
         $shortSkillDst = Get-ShortPath $skillDst
         $shortSkillSrc = Get-ShortPath $skillSrc
         Write-Host "Copied SKILL.md from: $shortSkillSrc to: $shortSkillDst"
-    } catch {
+    }
+    catch {
         Write-Warning ("Failed to copy SKILL.md from {0} to {1}: {2}" -f (Get-ShortPath $skillSrc), (Get-ShortPath $skillDst), $_)
     }
-} else {
+}
+else {
     Write-Warning ("Source SKILL.md not found at: {0}" -f (Get-ShortPath $skillSrc))
 }
 
