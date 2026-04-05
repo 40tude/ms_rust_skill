@@ -30,7 +30,7 @@ are strongly encouraged. The other sections must be present when applicable.
 ///
 /// # Abort
 /// If fn may abort the process, list when this may happen.
-pub fn foo() {}
+pub fn foo {}
 ```
 
 In contrast to other languages, you should not create a table of parameters. Instead parameter use is explained in plain text. In other words, do not
@@ -53,7 +53,7 @@ fn copy(src: File, dst: File) {}
 
 ### Related Reading
 
-- Function docs include error, panic, and safety considerations ([C-FAILURE](https://rust-lang.github.io/api-guidelines/documentation.html#c-failure))
+- Function docs include error, panic, and safety considerations (C-FAILURE)
 
 
 
@@ -110,7 +110,7 @@ When you document your item, the first sentence becomes the "summary sentence" t
 ///
 /// This is other documentation. It is only shown in that item's detail view.
 /// Sentences here can be as long as you like and it won't cause any issues.
-fn some_item() { }
+fn some_item { }
 ```
 
 Since Rust API documentation is rendered with a fixed max width, there is a naturally preferred sentence length you should not
@@ -168,15 +168,15 @@ The rest of the module documentation should be comprehensive, i.e., cover the mo
 - what the module contains
 - when it should be used, possibly when not
 - examples
-- subsystem specifications (e.g., `std::fmt` [also describes its formatting language](https://doc.rust-lang.org/stable/std/fmt/index.html#formatting-parameters))
+- subsystem specifications (e.g., `std::fmt` also describes its formatting language)
 - observable side effects, including what guarantees are made about these, if any
 - relevant implementation details, e.g., the used system APIs
 
  Great examples include:
 
-- [`std::fmt`](https://doc.rust-lang.org/stable/std/fmt/index.html)
-- [`std::pin`](https://doc.rust-lang.org/stable/std/pin/index.html)
-- [`std::option`](https://doc.rust-lang.org/stable/std/option/index.html)
+- `std::fmt`
+- `std::pin`
+- `std::option`
 
 This does not mean every module should contain all of these items. But if there is something to say about the interaction of the contained types,
 their module documentation is the right place.

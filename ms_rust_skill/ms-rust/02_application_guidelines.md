@@ -9,8 +9,8 @@ Version: 0.1
 
 > Note, this guideline is primarily a relaxation and clarification of [M-ERRORS-CANONICAL-STRUCTS].
 
-Applications, and crates in your own repository exclusively used from your application, may use [anyhow](https://github.com/dtolnay/anyhow),
-[eyre](https://github.com/eyre-rs/eyre) or similar application-level error crates instead of implementing their own types.
+Applications, and crates in your own repository exclusively used from your application, may use anyhow,
+eyre or similar application-level error crates instead of implementing their own types.
 
 For example, in your application crates you may just re-export and use eyre's common `Result` type, which should be able to automatically
 handle all third party library errors, in particular the ones following
@@ -19,9 +19,9 @@ handle all third party library errors, in particular the ones following
 ```rust,ignore
 use eyre::Result;
 
-fn start_application() -> Result<()> {
-    start_server()?;
-    Ok(())
+fn start_application -> Result<> {
+    start_server?;
+    Ok
 }
 ```
 
@@ -39,7 +39,7 @@ Libraries (crates used by more than one crate) should always follow [M-ERRORS-CA
 Why this version exists: To get significant performance for free.
 Version: 0.1
 
-Applications should set [mimalloc](https://crates.io/crates/mimalloc) as their global allocator. This usually results in notable performance
+Applications should set mimalloc as their global allocator. This usually results in notable performance
 increases along allocating hot paths; we have seen up to 25% benchmark improvements.
 
 Changing the allocator only takes a few lines of code. Add mimalloc to your `Cargo.toml` like so:

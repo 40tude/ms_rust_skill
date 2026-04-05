@@ -46,11 +46,11 @@ fn use_common_service(common: &CommonService) {
     // - `CommonService`, or ANY type nested deep within might have
     //   a different type layout in DLL2, leading to immediate
     //   undefined behavior (UB) ⚠️
-    // - `do_work()` here looks like it will be invoked in DLL2, but
+    // - `do_work` here looks like it will be invoked in DLL2, but
     //   the code executed will actually come from DLL1. This means that
-    //   `do_work()` invoked here will see a data structure coming from
+    //   `do_work` invoked here will see a data structure coming from
     //   DLL2, but will use statics from DLL1 ⚠️
-    common.do_work();
+    common.do_work;
 }
 ```
 

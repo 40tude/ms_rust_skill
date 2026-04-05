@@ -47,9 +47,9 @@ else, or they might have to pass your wrapped handle over FFI. To enable these u
 pub struct Handle(HNATIVE);
 
 impl Handle {
-    pub fn new() -> Self {
+    pub fn new -> Self {
         // Safely creates handle via API calls
-        # todo!()
+        # todo!
     }
 
     // Constructs a new Handle from a native handle the user got elsewhere.
@@ -91,25 +91,25 @@ struct Foo {}
 
 impl Future for Foo {
     // Explicit implementation of `Future` for your type
-    # type Output = ();
+    # type Output = ;
     #
-    # fn poll(self: Pin<&mut Self>, _: &mut Context<'_>) -> Poll<<Self as Future>::Output> { todo!() }
+    # fn poll(self: Pin<&mut Self>, _: &mut Context<'_>) -> Poll<<Self as Future>::Output> { todo! }
 }
 
 // You should assert your type is `Send`
-const fn assert_send<T: Send>() {}
-const _: () = assert_send::<Foo>();
+const fn assert_send<T: Send> {}
+const _:  = assert_send::<Foo>;
 ```
 
 When returning futures implicitly through `async` method calls, you should make sure these are `Send` too.
 You do not have to test every single method, but you should at least validate your main entry points.
 
 ```rust,edition2021
-async fn foo() { }
+async fn foo { }
 
 // TODO: We want this as a macro as well
 fn assert_send<T: Send>(_: T) {}
-_ = assert_send(foo());
+_ = assert_send(foo);
 ```
 
 ### Regular Types
@@ -120,7 +120,7 @@ Most regular types should be `Send`, as they otherwise infect futures turning th
 # use std::rc::Rc;
 # async fn read_file(x: &str) {}
 #
-async fn foo() {
+async fn foo {
     let rc = Rc::new(123);      // <-- Holding this across an .await point prevents
     read_file("foo.txt").await; //     the future from being `Send`.
     dbg!(rc);
@@ -132,15 +132,15 @@ That said, if the default use of your type is _instantaneous_, and there is no r
 ```rust,edition2021
 # use std::rc::Rc;
 # struct Telemetry; impl Telemetry { fn ping(&self, _: u32) {} }
-# fn telemetry() -> Telemetry  { Telemetry }
+# fn telemetry -> Telemetry  { Telemetry }
 # async fn read_file(x: &str) {}
 #
-async fn foo() {
+async fn foo {
     // Here a hypothetical instance Telemetry is summoned
     // and used ad-hoc. It may be ok for Telemetry to be !Send.
-    telemetry().ping(0);
+    telemetry.ping(0);
     read_file("foo.txt").await;
-    telemetry().ping(1);
+    telemetry.ping(1);
 }
 ```
 

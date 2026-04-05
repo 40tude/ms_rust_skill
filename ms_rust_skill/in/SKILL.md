@@ -112,6 +112,5 @@ Use when:
 1. **Load `08_universal_guidelines.md` FIRST, for every Rust task without exception.**
 2. Then load any additional guideline files relevant to the task (see "Which guideline to read and when" above).
 3. Apply the required rules from the relevant guidelines.
-4. Load `03_documentation.md` when you need to write documentation.
-5. Comments must ALWAYS be written in American English, unless the user explicitly requests ‘write comments in French’ or provides another clear instruction specifying a different comment language.
-6. If the file is fully compliant, add a comment: `// Rust guideline compliant {date}` where `{date}` is the **Current compliance date** shown at the top of this document.
+4. Comments must ALWAYS be written in American English, unless the user explicitly requests ‘write comments in French’ or provides another clear instruction specifying a different comment language.
+5. If the file is fully compliant, add a comment: `// Rust guideline compliant {date}` where `{date}` is the **Current compliance date** shown at the top of this document.

@@ -20,7 +20,7 @@ Consider a crate `core` with the following function:
 # use std::sync::atomic::Ordering;
 static GLOBAL_COUNTER: AtomicUsize = AtomicUsize::new(0);
 
-pub fn increase_counter() -> usize {
+pub fn increase_counter -> usize {
     GLOBAL_COUNTER.fetch_add(1, Ordering::Relaxed)
 }
 ```
@@ -29,21 +29,21 @@ Now assume you have a crate `main`, calling two libraries `library_a` and `libra
 
 ```rust,ignore
 // Increase global static counter 2 times
-library_a::count_up();
-library_a::count_up();
+library_a::count_up;
+library_a::count_up;
 
 // Increase global static counter 3 more times
-library_b::count_up();
-library_b::count_up();
-library_b::count_up();
+library_b::count_up;
+library_b::count_up;
+library_b::count_up;
 ```
 
 They eventually report their result:
 
 ```rust,ignore
-library_a::print_counter();
-library_b::print_counter();
-main::print_counter();
+library_a::print_counter;
+library_b::print_counter;
+main::print_counter;
 ```
 
 At this point, what is _the_ value of said counter; `0`, `2`, `3` or `5`?
@@ -94,13 +94,13 @@ This guideline has several implications for libraries, they
 - should not perform ad-hoc I/O, i.e., call `read("foo.txt")`
 - should not rely on non-mockable I/O and sys calls
 - should not create their own I/O or sys call _core_ themselves
-- should not offer `MyIoLibrary::default()` constructors
+- should not offer `MyIoLibrary::default` constructors
 
 Instead, libraries performing I/O and sys calls should either accept some I/O _core_ that is mockable already, or provide mocking functionality themselves:
 
 ```rust, ignore
 let lib = Library::new_runtime(runtime_io); // mockable I/O functionality passed in
-let (lib, mock) = Library::new_mocked(); // supports inherent mocking
+let (lib, mock) = Library::new_mocked; // supports inherent mocking
 ```
 
 Libraries supporting inherent mocking should implement it as follows:
@@ -111,8 +111,8 @@ pub struct Library {
 }
 
 impl Library {
-    pub fn new() -> Self { ... }
-    pub fn new_mocked() -> (Self, MockCtrl) { ... }
+    pub fn new -> Self { ... }
+    pub fn new_mocked -> (Self, MockCtrl) { ... }
 }
 ```
 
@@ -133,8 +133,8 @@ impl LibraryCore {
     // Some function you'd forward to the operating system.
     fn random_u32(&self) {
         match self {
-            Self::Native => unsafe { os_random_u32() }
-            Self::Mocked(m) => m.random_u32()
+            Self::Native => unsafe { os_random_u32 }
+            Self::Mocked(m) => m.random_u32
         }
     }
 }
@@ -183,7 +183,7 @@ instances shared a single controller:
 
 ```rust, ignore
 impl Library {
-    pub fn new_mocked() -> (Self, MockCtrl) { ... } // good
+    pub fn new_mocked -> (Self, MockCtrl) { ... } // good
     pub fn new_mocked_bad(&mut MockCtrl) -> Self { ... } // prone to misuse
 }
 ```
@@ -237,7 +237,7 @@ Use the appropriate `std` type for your task. In general you should use the stro
 | --- | --- | --- |
 | `String`* | `PathBuf`* | Anything dealing with the OS should be `Path`-like |
 
-That said, you should also follow common Rust `std` conventions. Purely numeric types at public API boundaries (e.g., `window_size()`) are expected to
+That said, you should also follow common Rust `std` conventions. Purely numeric types at public API boundaries (e.g., `window_size`) are expected to
 be regular numbers, not `Saturating<usize>`, `NonZero<usize>`, or similar.
 
 <footnotes>
@@ -264,10 +264,10 @@ We recommend you use a single flag only, named `test-util`. In any case, the fea
 
 ```rust, ignore
 impl HttpClient {
-    pub fn get() { ... }
+    pub fn get { ... }
 
     #[cfg(feature = "test-util")]
-    pub fn bypass_certificate_checks() { ... }
+    pub fn bypass_certificate_checks { ... }
 }
 ```
 

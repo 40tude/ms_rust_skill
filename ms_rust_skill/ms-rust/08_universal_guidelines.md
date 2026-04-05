@@ -21,12 +21,12 @@ exceptions, life cycle issues should likewise not be made the subject of some ma
 way they are needed, their disposal is governed by `Drop`, and only `Drop`.
 
 Regarding factories, at least the term should be avoided. While the concept `FooFactory` has its use, its canonical
-Rust name is `Builder` (compare [M-INIT-BUILDER](../libs/ux/#M-INIT-BUILDER)). A builder that can produce items repeatedly is still a builder.
+Rust name is `Builder` (compare M-INIT-BUILDER). A builder that can produce items repeatedly is still a builder.
 
 In addition, accepting factories (builders) as parameters is an unidiomatic import of OO concepts into Rust. If
-repeatable instantiation is required, functions should ask for an `impl Fn() -> Foo` over a `FooBuilder` or
+repeatable instantiation is required, functions should ask for an `impl Fn -> Foo` over a `FooBuilder` or
 similar. In contrast, standalone builders have their use, but primarily to reduce parametric permutation complexity
-around optional values (again, [M-INIT-BUILDER](../libs/ux/#M-INIT-BUILDER)).
+around optional values (again, M-INIT-BUILDER).
 
 
 
@@ -80,7 +80,7 @@ Overrides should be accompanied by a `reason`:
 
 ```rust,edition2021
 #[expect(clippy::unused_async, reason = "API fixed, will use I/O later")]
-pub async fn ping_server() {
+pub async fn ping_server {
   // Stubbed out for now
 }
 ```
@@ -93,9 +93,9 @@ Why this version exists: To minimize the cost of logging and to improve filterin
 Version: 0.1
 
 Logging should use structured events with named properties and message templates following
-the [message templates](https://messagetemplates.org/) specification.
+the message templates specification.
 
-> **Note:** Examples use the [`tracing`](https://docs.rs/tracing/) crate's `event!` macro,
+> **Note:** Examples use the `tracing` crate's `event!` macro,
 but these principles apply to any logging API that supports structured logging (e.g., `log`,
 `slog`, custom telemetry systems).
 
@@ -113,7 +113,7 @@ tracing::info!(format!("file opened: {}", path));
 event!(
     name: "file.open.success",
     Level::INFO,
-    file.path = path.display(),
+    file.path = path.display,
     "file opened: {{file.path}}",
 );
 ```
@@ -146,14 +146,14 @@ Named events enable grouping and filtering across log entries.
 
 ### Follow OpenTelemetry Semantic Conventions
 
-Use [OTel semantic conventions](https://opentelemetry.io/docs/specs/semconv/) for common attributes if needed.
+Use OTel semantic conventions for common attributes if needed.
 This enables standardization and interoperability.
 
 ```rust,ignore
 event!(
     name: "file.write.success",
     Level::INFO,
-    file.path = path.display(),         // Standard OTel name
+    file.path = path.display,         // Standard OTel name
     file.size = bytes_written,          // Standard OTel name
     file.directory = dir_path,          // Standard OTel name
     file.extension = extension,         // Standard OTel name
@@ -194,13 +194,13 @@ event!(
 ```
 
 Sensitive data includes email addresses, file paths revealing user identity, filenames containing secrets or tokens,
-file contents with PII, temporary file paths with session IDs and more. Consider using the [`data_privacy`](https://crates.io/crates/data_privacy) crate for consistent redaction.
+file contents with PII, temporary file paths with session IDs and more. Consider using the `data_privacy` crate for consistent redaction.
 
 ### Further Reading
 
-- [Message Templates Specification](https://messagetemplates.org/)
-- [OpenTelemetry Semantic Conventions](https://opentelemetry.io/docs/specs/semconv/)
-- [OWASP Logging Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html)
+- Message Templates Specification
+- OpenTelemetry Semantic Conventions
+- OWASP Logging Cheat Sheet
 
 
 
@@ -211,7 +211,7 @@ Version: 1.0
 
 Panics are not exceptions. Instead, they suggest immediate program termination.
 
-Although your code must be [panic-safe](https://doc.rust-lang.org/nomicon/exception-safety.html) (i.e., a survived panic may not lead to
+Although your code must be panic-safe (i.e., a survived panic may not lead to
 inconsistent state), invoking a panic means _this program should stop now_. It is not valid to:
 
 - use panics to communicate (errors) upstream,
@@ -228,9 +228,9 @@ panic = "abort"
 then any invocation of panic will cause an otherwise functioning program to needlessly abort. Valid reasons to panic are:
 
 - when encountering a programming error, e.g., `x.expect("must never happen")`,
-- anything invoked from const contexts, e.g., `const { foo.unwrap() }`,
-- when user requested, e.g., providing an `unwrap()` method yourself,
-- when encountering a poison, e.g., by calling `unwrap()` on a lock result (a poisoned lock signals another thread has panicked already).
+- anything invoked from const contexts, e.g., `const { foo.unwrap }`,
+- when user requested, e.g., providing an `unwrap` method yourself,
+- when encountering a poison, e.g., by calling `unwrap` on a lock result (a poisoned lock signals another thread has panicked already).
 
 Any of those are directly or indirectly linked to programming errors.
 
@@ -308,9 +308,9 @@ impl Debug for UserSecret {
 }
 
 #[test]
-fn test() {
+fn test {
     let key = "552d3454-d0d5-445d-ab9f-ef2ae3a8896a";
-    let secret = UserSecret(key.to_string());
+    let secret = UserSecret(key.to_string);
     let rendered = format!("{:?}", secret);
 
     assert!(rendered.contains("UserSecret"));
@@ -352,7 +352,7 @@ struct Database {}
 
 impl Database {
     // Ok, associated function creates an instance
-    fn new() -> Self {}
+    fn new -> Self {}
 
     // Ok, regular method with `&self` as receiver
     fn query(&self) {}
@@ -371,13 +371,13 @@ Regular functions are more idiomatic, and reduce unnecessary noise on the caller
 
 ```rust
 pub trait Default {
-    fn default() -> Self;
+    fn default -> Self;
 }
 
 struct Foo;
 
 impl Default for Foo {
-    fn default() -> Self { Self }
+    fn default -> Self { Self }
 }
 ```
 
@@ -431,13 +431,13 @@ Version: 1.0
 Projects should use the following static verification tools to help maintain the quality of the code. These tools can be
 configured to run on a developer's machine during normal work, and should be used as part of check-in gates.
 
-* [compiler lints](https://doc.rust-lang.org/rustc/lints/index.html) offer many lints to avoid bugs and improve code quality.
-* [clippy lints](https://doc.rust-lang.org/clippy/) contain hundreds of lints to avoid bugs and improve code quality.
-* [rustfmt](https://github.com/rust-lang/rustfmt) ensures consistent source formatting.
-* [cargo-audit](https://crates.io/crates/cargo-audit) verifies crate dependencies for security vulnerabilities.
-* [cargo-hack](https://crates.io/crates/cargo-hack) validates that all combinations of crate features work correctly.
-* [cargo-udeps](https://crates.io/crates/cargo-udeps) detects unused dependencies in Cargo.toml files.
-* [miri](https://github.com/rust-lang/miri) validates the correctness of unsafe code.
+* compiler lints offer many lints to avoid bugs and improve code quality.
+* clippy lints contain hundreds of lints to avoid bugs and improve code quality.
+* rustfmt ensures consistent source formatting.
+* cargo-audit verifies crate dependencies for security vulnerabilities.
+* cargo-hack validates that all combinations of crate features work correctly.
+* cargo-udeps detects unused dependencies in Cargo.toml files.
+* miri validates the correctness of unsafe code.
 
 ### Compiler Lints
 
@@ -512,23 +512,23 @@ Version: 1.0
 
 The guidelines in this book complement existing Rust guidelines, in particular:
 
-- [Rust API Guidelines](https://rust-lang.github.io/api-guidelines/checklist.html)
-- [Rust Style Guide](https://doc.rust-lang.org/nightly/style-guide/)
-- [Rust Design Patterns](https://rust-unofficial.github.io/patterns//intro.html)
-- [Rust Reference - Undefined Behavior](https://doc.rust-lang.org/reference/behavior-considered-undefined.html)
+- Rust API Guidelines
+- Rust Style Guide
+- Rust Design Patterns
+- Rust Reference - Undefined Behavior
 
 We recommend you read through these as well, and apply them in addition to this book's items. Pay special attention to the ones below, as they are frequently forgotten:
 
-- [ ] [C-CONV](https://rust-lang.github.io/api-guidelines/naming.html#ad-hoc-conversions-follow-as_-to_-into_-conventions-c-conv) - Ad-hoc conversions
+- [ ] C-CONV - Ad-hoc conversions
   follow  `as_`, `to_`, `into_` conventions
-- [ ] [C-GETTER](https://rust-lang.github.io/api-guidelines/naming.html#getter-names-follow-rust-convention-c-getter) - Getter names follow Rust convention
-- [ ] [C-COMMON-TRAITS](https://rust-lang.github.io/api-guidelines/interoperability.html#c-common-traits) - Types eagerly implement common traits
+- [ ] C-GETTER - Getter names follow Rust convention
+- [ ] C-COMMON-TRAITS - Types eagerly implement common traits
   - `Copy`, `Clone`, `Eq`, `PartialEq`, `Ord`, `PartialOrd`, `Hash`, `Default`, `Debug`
   - `Display` where type wants to be displayed
-- [ ] [C-CTOR](https://rust-lang.github.io/api-guidelines/predictability.html?highlight=new#constructors-are-static-inherent-methods-c-ctor) -
+- [ ] C-CTOR -
   Constructors are static, inherent methods
-  - In particular, have `Foo::new()`, even if you have `Foo::default()`
-- [ ] [C-FEATURE](https://rust-lang.github.io/api-guidelines/naming.html#feature-names-are-free-of-placeholder-words-c-feature) - Feature names
+  - In particular, have `Foo::new`, even if you have `Foo::default`
+- [ ] C-FEATURE - Feature names
   are free of placeholder words
 
 

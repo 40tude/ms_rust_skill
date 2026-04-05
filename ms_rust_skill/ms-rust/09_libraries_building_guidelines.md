@@ -17,8 +17,8 @@ All library features must be additive, and any combination must work, as long as
 
 Further Reading
 
-- [Feature Unification](https://doc.rust-lang.org/cargo/reference/features.html#feature-unification)
-- [Mutually Exclusive Features](https://doc.rust-lang.org/cargo/reference/features.html#mutually-exclusive-features)
+- Feature Unification
+- Mutually Exclusive Features
 
 
 
@@ -59,13 +59,13 @@ While there are tools targeting specific functionality (e.g., a Wayland composit
 
 This means crates must build, ultimately
 
-- [ ] on all [Tier 1 platforms](https://doc.rust-lang.org/rustc/platform-support.html),<sup>1</sup> and
+- [ ] on all Tier 1 platforms,<sup>1</sup> and
 - [ ] without any additional prerequisites beyond `cargo` and `rust`.<sup>2</sup>
 
 <footnotes>
 
 <sup>1</sup> It is ok to not support Tier 1 platforms "for now", but abstractions must be present so support can easily be extended. This is usually
-done by introducing an internal `HAL` ([Hardware Abstraction Layer](https://en.wikipedia.org/wiki/HAL_(software))) module with a `dummy` fallback target.<br/>
+done by introducing an internal `HAL` (Hardware Abstraction Layer)) module with a `dummy` fallback target.<br/>
 <sup>2</sup> A default Rust installation will also have `cc` and a linker present.
 
 </footnotes>
@@ -100,12 +100,12 @@ in [M-OOBE].
 Follow these steps to produce a crate that _just works_ across platforms:
 
 - [ ] fully govern the build of `foo.lib` from `build.rs` inside `foo-sys`. Only use hand-crafted compilation via the
-  [cc](https://crates.io/crates/cc) crate, do _not_ run Makefiles or external build scripts, as that will require the installation of external dependencies,
+  cc crate, do _not_ run Makefiles or external build scripts, as that will require the installation of external dependencies,
 - [ ] make all external tools optional, such as `nasm`,
 - [ ] embed the upstream source code in your crate,
 - [ ] make the embedded sources verifiable (e.g., include Git URL + hash),
 - [ ] pre-generate `bindgen` glue if possible,
-- [ ] support both static linking, and dynamic linking via [libloading](https://crates.io/crates/libloading).
+- [ ] support both static linking, and dynamic linking via libloading.
 
 Deviations from these points can work, and can be considered on a case-by-case basis:
 

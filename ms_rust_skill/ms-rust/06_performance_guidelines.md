@@ -13,12 +13,12 @@ You should, early in the development process, identify if your crate is performa
 - regularly run a profiler collecting CPU and allocation insights,
 - document or communicate the most performance sensitive areas.
 
-For benchmarks we recommend [criterion](https://crates.io/crates/criterion) or [divan](https://crates.io/crates/divan).
+For benchmarks we recommend criterion or divan.
 If possible, benchmarks should not only measure elapsed wall time, but also used CPU time over all threads (this unfortunately
 requires manual work and is not supported out of the box by the common benchmark utils).
 
-Profiling Rust on Windows works out of the box with [Intel VTune](https://www.intel.com/content/www/us/en/developer/tools/oneapi/vtune-profiler.html)
-and [Superluminal](https://superluminal.eu/). However, to gain meaningful CPU insights you should enable debug symbols for benchmarks in your `Cargo.toml`:
+Profiling Rust on Windows works out of the box with Intel VTune
+and Superluminal. However, to gain meaningful CPU insights you should enable debug symbols for benchmarks in your `Cargo.toml`:
 
 ```toml
 [profile.bench]
@@ -30,7 +30,7 @@ sharing screenshots of your latest profiling hot spots.
 
 ### Further Reading
 
-- [Performance Tips](https://cheats.rs/#performance-tips)
+- Performance Tips
 
 > ### <tip></tip> How much faster?
 >
@@ -84,7 +84,7 @@ Shared state should only be used if the cost of sharing is less than the cost of
 Why this version exists: To ensure you don't starve other tasks of CPU time.
 Version: 0.2
 
-If you perform long running computations, they should contain `yield_now().await` points.
+If you perform long running computations, they should contain `yield_now.await` points.
 
 Your future might be executed in a runtime that cannot work around blocking or long-running tasks. Even then, such tasks are
 considered bad design and cause runtime overhead. If your complex task performs I/O regularly it will simply utilize these await points to preempt itself:
@@ -102,15 +102,15 @@ If your task performs long-running CPU operations without intermixed I/O, it sho
 
 ```rust, ignore
 async fn process_items(zip_file: File) {
-    let items = zip_file.read().async;
+    let items = zip_file.read.async;
     for i in items {
         decompress(i);
-        yield_now().await;
+        yield_now.await;
     }
 }
 ```
 
-If the number and duration of your individual operations are unpredictable you should use APIs such as `has_budget_remaining()` and
+If the number and duration of your individual operations are unpredictable you should use APIs such as `has_budget_remaining` and
 related APIs to query your hosting runtime.
 
 > ### <tip></tip> Yield how often?

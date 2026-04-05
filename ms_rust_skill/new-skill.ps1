@@ -178,8 +178,64 @@ function Remove-AnchorSuffix([string]$text) {
     return [System.Text.RegularExpressions.Regex]::Replace(
         $text,
         '\(\s*(\S+?)\s*\)\s*\{\s*#\1\s*\}'
-        ,''
+        , ''
     )
+}
+
+# Removes external hyperlinks [text](https://...).
+# Lines whose only content is a link (+ optional trailing , . and) are deleted entirely.
+# Inline links embedded in prose keep their anchor text.
+# Cleans up empty parentheses () and orphaned "Follow" left alone on a line.
+#
+# NOTE: all patterns use the negative lookbehind (?<!!) to exclude markdown image syntax
+# ![alt](src). Image links such as ![TEXT](M-DOC-INLINE_BAD.png) must be left intact at
+# this stage because Invoke-ImageReplacements replaces them later on the written files.
+function Remove-ExternalLinks([string]$text) {
+    $opts = [System.Text.RegularExpressions.RegexOptions]::Multiline
+    # Pass 1: delete lines that are nothing but a link + optional punctuation
+    $result = [System.Text.RegularExpressions.Regex]::Replace(
+        $text,
+        '^\s*(?<!!)\[[^\]]+\]\(https?://[^)]+\)\s*(?:,?\s*(?:and\s*)?)?\s*[.,]?\s*$',
+        '',
+        $opts
+    )
+    # Pass 2: inline links still present -- keep anchor text, drop URL
+    $result = [System.Text.RegularExpressions.Regex]::Replace(
+        $result,
+        '(?<!!)\[([^\]]+)\]\(https?://[^)]+\)',
+        '$1'
+    )
+    $result = [System.Text.RegularExpressions.Regex]::Replace($result, '\(\s*\)', '')
+    $result = [System.Text.RegularExpressions.Regex]::Replace($result, '^\s*Follow\s*$', '', $opts)
+    return $result
+}
+
+# Removes relative/internal links [text](path).
+# Lines whose only content is a link (+ optional trailing , . and) are deleted entirely.
+# Inline links embedded in prose keep their anchor text.
+# Cleans up empty parentheses () and orphaned "Follow" left alone on a line.
+#
+# NOTE: all patterns use the negative lookbehind (?<!!) to exclude markdown image syntax
+# ![alt](src). Image links such as ![TEXT](M-DOC-INLINE_BAD.png) must be left intact at
+# this stage because Invoke-ImageReplacements replaces them later on the written files.
+function Remove-RelativeLinks([string]$text) {
+    $opts = [System.Text.RegularExpressions.RegexOptions]::Multiline
+    # Pass 1: delete lines that are nothing but a link + optional punctuation
+    $result = [System.Text.RegularExpressions.Regex]::Replace(
+        $text,
+        '^\s*(?<!!)\[[^\]]+\]\((?!https?://)[^)]+\)\s*(?:,?\s*(?:and\s*)?)?\s*[.,]?\s*$',
+        '',
+        $opts
+    )
+    # Pass 2: inline links still present -- keep anchor text, drop URL
+    $result = [System.Text.RegularExpressions.Regex]::Replace(
+        $result,
+        '(?<!!)\[([^\]]+)\]\((?!https?://)[^)]+\)',
+        '$1'
+    )
+    $result = [System.Text.RegularExpressions.Regex]::Replace($result, '\(\s*\)', '')
+    $result = [System.Text.RegularExpressions.Regex]::Replace($result, '^\s*Follow\s*$', '', $opts)
+    return $result
 }
 
 # ===========================================================================
@@ -228,7 +284,8 @@ if (Test-Path $outDir) {
 else {
     try {
         New-Item -Path $outDir -ItemType Directory -ErrorAction Stop | Out-Null
-    } catch {
+    }
+    catch {
         Write-Error "Cannot create output directory '$outDir': $_"
         exit 1
     }
@@ -241,6 +298,10 @@ $content = ConvertFrom-VersionTag $content
 Write-Verbose "Applied ConvertFrom-VersionTag"
 $content = Remove-AnchorSuffix $content
 Write-Verbose "Applied Remove-AnchorSuffix"
+$content = Remove-ExternalLinks $content
+Write-Verbose "Applied Remove-ExternalLinks"
+$content = Remove-RelativeLinks $content
+Write-Verbose "Applied Remove-RelativeLinks"
 $lines = [System.Text.RegularExpressions.Regex]::Split($content, "\r?\n")
 
 # Find separator lines that start with three dashes (pattern '^---')
@@ -303,10 +364,12 @@ for ($k = 0; $k -lt ($sepIndices.Count - 1); $k++) {
         try {
             if ($extractLines.Count -eq 0) {
                 "" | Out-File -FilePath $outPath -Encoding UTF8 -ErrorAction Stop
-            } else {
+            }
+            else {
                 $extractLines | Out-File -FilePath $outPath -Encoding UTF8 -ErrorAction Stop
             }
-        } catch {
+        }
+        catch {
             Write-Warning "Failed to write '$outName': $_"
             continue
         }

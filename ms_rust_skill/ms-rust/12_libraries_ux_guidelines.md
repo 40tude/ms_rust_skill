@@ -18,7 +18,7 @@ If wrappers are needed internally, they should be hidden behind a clean API that
 ```rust,ignore
 // Good: simple API
 pub fn process_data(data: &Data) -> State { ... }
-pub fn store_config(config: Config) -> Result<(), Error> { ... }
+pub fn store_config(config: Config) -> Result<, Error> { ... }
 
 // Bad: Exposing implementation details
 pub fn process_shared(data: Arc<Mutex<Shared>>) -> Box<Processed> { ... }
@@ -129,7 +129,7 @@ async fn read_database(x: &DataAccess) { ... }
 Why this version exists: To harmonize the behavior of error types, and provide a consistent error handling.
 Version: 1.0
 
-Errors should be a situation-specific `struct` that contain a [`Backtrace`](https://doc.rust-lang.org/stable/std/backtrace/struct.Backtrace.html),
+Errors should be a situation-specific `struct` that contain a `Backtrace`,
 a possible upstream error cause, and helper methods.
 
 Simple crates usually expose a single error type `Error`, complex crates may expose multiple types, for example
@@ -146,8 +146,8 @@ pub struct ConfigurationError {
 }
 
 impl ConfigurationError {
-    pub(crate) fn new() -> Self {
-        Self { backtrace: Backtrace::capture() }
+    pub(crate) fn new -> Self {
+        Self { backtrace: Backtrace::capture }
     }
 }
 
@@ -172,22 +172,22 @@ Error kinds, and more generally enum-based errors, should not be used to avoid c
 
 ```rust, ignore
 // Prefer this
-fn download_iso() -> Result<(), DownloadError> {}
-fn start_vm() -> Result<(), VmError> {}
+fn download_iso -> Result<, DownloadError> {}
+fn start_vm -> Result<, VmError> {}
 
 // Over that
-fn download_iso() -> Result<(), GlobalEverythingErrorEnum> {}
-fn start_vm() -> Result<(), GlobalEverythingErrorEnum> {}
+fn download_iso -> Result<, GlobalEverythingErrorEnum> {}
+fn start_vm -> Result<, GlobalEverythingErrorEnum> {}
 
 // However, not every function warrants a new error type. Errors
 // should be general enough to be reused.
-fn parse_json() -> Result<(), ParseError> {}
-fn parse_toml() -> Result<(), ParseError> {}
+fn parse_json -> Result<, ParseError> {}
+fn parse_toml -> Result<, ParseError> {}
 ```
 
 If you do use an inner `ErrorKind`, that enum should not be exposed directly for future-proofing reasons,
 as otherwise you would expose your callers to _all_ possible failure modes, even the ones you consider internal
-and unhandleable. Instead, expose various `is_xxx()` methods as shown below:
+and unhandleable. Instead, expose various `is_xxx` methods as shown below:
 
 ```rust
 # use std::backtrace::Backtrace;
@@ -212,7 +212,7 @@ impl HttpError {
 ```
 
 Most upstream errors don't provide a backtrace. You should capture one when creating an `Error` instance, either via one of
-your `Error::new()` flavors, or when implementing `From<UpstreamError> for Error {}`.
+your `Error::new` flavors, or when implementing `From<UpstreamError> for Error {}`.
 
 Error structs must properly implement `Display` that renders as follows:
 
@@ -222,7 +222,7 @@ impl Display for MyError {
     // Print `self.backtrace`.
     // Print any additional upstream 'cause' information you might have.
 #   fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-#       todo!()
+#       todo!
 #   }
 }
 ```
@@ -233,16 +233,16 @@ Errors must also implement `std::error::Error`:
 impl std::error::Error for MyError { }
 ```
 
-Lastly, if you happen to emit lots of errors from your crate, consider creating a private `bail!()` helper macro to simplify error instantiation.
+Lastly, if you happen to emit lots of errors from your crate, consider creating a private `bail!` helper macro to simplify error instantiation.
 
 > ### <tip></tip> When You Get Backtraces
 >
 > Backtraces are an invaluable debug tool in complex or async code, since  errors might _travel_ far through a callstack before being surfaced.
 >
-> That said, they are a _development_ tool, not a _runtime_ diagnostic, and by default `Backtrace::capture()` will **not** capture
+> That said, they are a _development_ tool, not a _runtime_ diagnostic, and by default `Backtrace::capture` will **not** capture
 > backtraces, as they have a large overhead, e.g., 4μs per capture on the author's PC.
 >
-> Instead, Rust evaluates a [set of environment variables](https://doc.rust-lang.org/stable/std/backtrace/index.html#environment-variables), such as
+> Instead, Rust evaluates a set of environment variables, such as
 > `RUST_BACKTRACE`, and only walks the call frame when explicitly asked. Otherwise it captures an empty trace, at the cost of only a few CPU instructions.
 
 
@@ -300,7 +300,7 @@ Why this version exists: To give users flexibility calling in with their own typ
 Version: 1.0
 
 In **function** signatures, accept `impl AsRef<T>` for types that have a
-[clear reference hierarchy](https://doc.rust-lang.org/stable/std/convert/trait.AsRef.html#implementors), where you
+clear reference hierarchy, where you
 do not need to take ownership, or where object creation is relatively cheap.
 
 | Instead of ... | accept ... |
@@ -347,7 +347,7 @@ struct User {
 Why this version exists: To untangle business logic from I/O logic, and have N*M composability.
 Version: 0.1
 
-Functions and types that only need to perform one-shot I/O during initialization should be written "[sans-io](https://www.firezone.dev/blog/sans-io)",
+Functions and types that only need to perform one-shot I/O during initialization should be written "sans-io",
 and accept some `impl T`, where `T` is the appropriate I/O trait, effectively outsourcing I/O work to another type:
 
 ```rust,ignore
@@ -367,9 +367,9 @@ fn parse_data(file: File) {}
 fn parse_data(data: impl std::io::Read) {}
 ```
 
-Synchronous functions should use [`std::io::Read`](https://doc.rust-lang.org/std/io/trait.Read.html) and
-[`std::io::Write`](https://doc.rust-lang.org/std/io/trait.Write.html). Asynchronous _functions_ targeting more than one runtime should use
-[`futures::io::AsyncRead`](https://docs.rs/futures/latest/futures/io/trait.AsyncRead.html) and similar.
+Synchronous functions should use `std::io::Read` and
+`std::io::Write`. Asynchronous _functions_ targeting more than one runtime should use
+`futures::io::AsyncRead` and similar.
 _Types_ that need to perform runtime-specific, continuous I/O should follow [M-RUNTIME-ABSTRACTED] instead.
 
 [M-RUNTIME-ABSTRACTED]: ./#M-RUNTIME-ABSTRACTED
@@ -420,7 +420,7 @@ struct Foo;
 
 // Supports 2 optional construction parameters, inherent methods ok.
 impl Foo {
-    pub fn new() -> Self { Self }
+    pub fn new -> Self { Self }
     pub fn with_a(a: A) -> Self { Self }
     pub fn with_b(b: B) -> Self { Self }
     pub fn with_a_b(a: A, b: B) -> Self { Self }
@@ -436,8 +436,8 @@ Beyond that, types should provide a builder:
 # struct Foo;
 # struct FooBuilder;
 impl Foo {
-    pub fn new() -> Self { ... }
-    pub fn builder() -> FooBuilder { ... }
+    pub fn new -> Self { ... }
+    pub fn builder -> FooBuilder { ... }
 }
 
 impl FooBuilder {
@@ -450,8 +450,8 @@ impl FooBuilder {
 ```
 
 The proper name for a builder that builds `Foo` is `FooBuilder`. Its methods must be chainable, with the final method called
-`.build()`. The buildable struct must have a shortcut `Foo::builder()`, while the builder itself should _not_ have a public
-`FooBuilder::new()`. Builder methods that set a value `x` are called `x()`, not `set_x()` or similar.
+`.build`. The buildable struct must have a shortcut `Foo::builder`, while the builder itself should _not_ have a public
+`FooBuilder::new`. Builder methods that set a value `x` are called `x`, not `set_x` or similar.
 
 ### Builders and Required Parameters
 
@@ -483,7 +483,7 @@ This pattern allows for convenient usage:
 - `Foo::builder((logger, config))` - when both parameters are needed
 - `Foo::builder(FooDeps { logger, config })` - explicit struct construction
 
-Alternatively, you can use [`fundle`](https://docs.rs/fundle) to simplify the creation of `FooDeps`:
+Alternatively, you can use `fundle` to simplify the creation of `FooDeps`:
 
 ```rust, ignore
 #[derive(Debug, Clone)]
@@ -494,7 +494,7 @@ pub struct FooDeps {
 }
 ```
 
-This pattern enables "dependency injection", see [these docs](https://docs.rs/fundle/latest/fundle/attr.deps.html) for more details.
+This pattern enables "dependency injection", see these docs for more details.
 
 ### Runtime-Specific Builders
 
@@ -528,8 +528,8 @@ builder methods follow the pattern `builder_{runtime}(deps)` where `{runtime}` i
 
 ### Further Reading
 
-- [Builder pattern in Rust: self vs. &mut self, and method vs. associated function](https://users.rust-lang.org/t/builder-pattern-in-rust-self-vs-mut-self-and-method-vs-associated-function/72892)
-- [fundle](https://docs.rs/fundle)
+- Builder pattern in Rust: self vs. &mut self, and method vs. associated function
+- fundle
 
 
 
@@ -584,7 +584,7 @@ impl ThreadLocal for MyThreadState {
     fn init(...) -> Self {
 
         // Create common service instance possibly used by many.
-        let common = ServiceCommon::new();
+        let common = ServiceCommon::new;
 
         // Users can freely pass `common` here multiple times
         let service_1 = ServiceA::new(&common);
@@ -602,7 +602,7 @@ impl ServiceA {
     pub fn new(common: &ServiceCommon) -> Self {
         // If we only need to access `common` from `new` we don't have
         // to store it. Otherwise, make a clone we store in `Self`.
-        let common = common.clone();
+        let common = common.clone;
     }
 }
 ```
@@ -619,13 +619,13 @@ pub ServiceCommon {
 }
 
 impl ServiceCommon {
-    pub fn new() {
-        Self { inner: Arc::new(ServiceCommonInner::new()) }
+    pub fn new {
+        Self { inner: Arc::new(ServiceCommonInner::new) }
     }
 
     // Method forwards ...
-    pub fn foo(&self) { self.inner.foo() }
-    pub fn bar(&self) { self.inner.bar() }
+    pub fn foo(&self) { self.inner.foo }
+    pub fn bar(&self) { self.inner.bar }
 }
 ```
 
@@ -669,7 +669,7 @@ To decide whether type parameter nesting should be avoided, consider these facto
 
 - Will the type be **named** by your users?
   - Service-level types are always expected to be named (e.g., `Library<T>`),
-  - Utility types, such as the many [`std::iter`](https://doc.rust-lang.org/stable/std/iter/index.html) types like `Chain`, `Cloned`, `Cycle`, are not
+  - Utility types, such as the many `std::iter` types like `Chain`, `Cloned`, `Cycle`, are not
     expected to be named.
 - Does the type primarily compose with non-user types?
 - Do the used type parameters have complex bounds?
@@ -687,8 +687,8 @@ should be free to do so.
 > reduce friction users encounter when working with your code.
 >
 > However, when designing API patterns and ecosystems at large, there might be valid reasons to introduce intricate type magic to overall _lower_
-> the cognitive friction involved, [Bevy's ECS](https://docs.rs/bevy_ecs/latest/bevy_ecs/) or
-> [Axum's request handlers](https://docs.rs/axum/latest/axum/handler/trait.Handler.html) come to mind.
+> the cognitive friction involved, Bevy's ECS or
+> Axum's request handlers come to mind.
 >
 > The threshold where this pays off is high though. If there is any doubt about the utility of your creative use of generics, your users might be
 > better off without them.

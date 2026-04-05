@@ -15,7 +15,7 @@ It must not be used to mark functions that are dangerous to call for other reaso
 unsafe fn print_string(x: *const String) { }
 
 // Invalid use of unsafe
-unsafe fn delete_database() { }
+unsafe fn delete_database { }
 ```
 
 
@@ -28,7 +28,7 @@ Version: 0.2
 You must have a valid reason to use `unsafe`. The only valid reasons are
 
 1) novel abstractions, e.g., a new smart pointer or allocator,
-1) performance, e.g., attempting to call `.get_unchecked()`,
+1) performance, e.g., attempting to call `.get_unchecked`,
 1) FFI and platform calls, e.g., calling into C or the kernel, ...
 
 Unsafe code lowers the guardrails used by the compiler, transferring some of the compiler's responsibilities
@@ -49,33 +49,33 @@ In any case, `unsafe` must follow the guidelines outlined below.
 
 - [ ] Verify there is no established alternative. If there is, prefer that.
 - [ ] Your abstraction must be minimal and testable.
-- [ ] It must be hardened and tested against ["adversarial code"](https://cheats.rs/#adversarial-code), esp.
+- [ ] It must be hardened and tested against "adversarial code", esp.
   - If they accept closures they must become invalid (e.g., poisoned) if the closure panics
   - They must assume any safe trait is misbehaving, esp. `Deref`, `Clone` and `Drop`.
 - [ ] Any use of `unsafe` must be accompanied by plain-text reasoning outlining its safety
-- [ ] It must pass [Miri](https://github.com/rust-lang/miri), including adversarial test cases
-- [ ] It must follow all other [unsafe code guidelines](https://rust-lang.github.io/unsafe-code-guidelines/)
+- [ ] It must pass Miri, including adversarial test cases
+- [ ] It must follow all other unsafe code guidelines
 
 ### Performance
 
 - [ ] Using `unsafe` for performance reasons should only be done after benchmarking
 - [ ] Any use of `unsafe` must be accompanied by plain-text reasoning outlining its safety. This applies to both
   calling `unsafe` methods, as well as providing `_unchecked` ones.
-- [ ] The code in question must pass [Miri](https://github.com/rust-lang/miri)
-- [ ] You must follow the [unsafe code guidelines](https://rust-lang.github.io/unsafe-code-guidelines/)
+- [ ] The code in question must pass Miri
+- [ ] You must follow the unsafe code guidelines
 
 ### FFI
 
 - [ ] We recommend you use an established interop library to avoid `unsafe` constructs
-- [ ] You must follow the [unsafe code guidelines](https://rust-lang.github.io/unsafe-code-guidelines/)
+- [ ] You must follow the unsafe code guidelines
 - [ ] You must document your generated bindings to make it clear which call patterns are permissible
 
 ### Further Reading
 
-- [Nomicon](https://doc.rust-lang.org/nightly/nomicon/)
-- [Unsafe Code Guidelines](https://rust-lang.github.io/unsafe-code-guidelines/)
-- [Miri](https://github.com/rust-lang/miri)
-- ["Adversarial code"](https://cheats.rs/#adversarial-code)
+- Nomicon
+- Unsafe Code Guidelines
+- Miri
+- "Adversarial code"
 
 
 
@@ -91,13 +91,13 @@ Unsound code is seemingly _safe_ code that may produce undefined behavior when c
 > The terms _safe_ and `unsafe` are technical terms in Rust.
 >
 > A function is _safe_, if its signature does not mark it `unsafe`. That said, _safe_ functions can still be dangerous
-> (e.g., `delete_database()`), and `unsafe` ones are, when properly used, usually quite benign (e.g.,`vec.get_unchecked()`).
+> (e.g., `delete_database`), and `unsafe` ones are, when properly used, usually quite benign (e.g.,`vec.get_unchecked`).
 >
 > A function is therefore _unsound_ if it appears _safe_ (i.e., it is not marked `unsafe`), but if _any_ of its calling
 > modes would cause undefined behavior. This is to be interpreted in the strictest sense. Even if causing undefined
 > behavior is only a 'remote, theoretical possibility' requiring 'weird code', the function is unsound.
 >
-> Also see [Unsafe, Unsound, Undefined](https://cheats.rs/#unsafe-unsound-undefined).
+> Also see Unsafe, Unsound, Undefined.
 
 ```rust
 // "Safely" converts types
@@ -130,9 +130,9 @@ While you may break most guidelines if you have a good enough reason, there are 
 > struct MyDevice(*const u8);
 >
 > impl MyDevice {
->     fn new() -> Self {
+>     fn new -> Self {
 >        // Properly initializes instance ...
->        # todo!()
+>        # todo!
 >     }
 >
 >     fn get(&self) -> u8 {
