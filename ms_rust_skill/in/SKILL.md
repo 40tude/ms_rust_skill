@@ -11,16 +11,12 @@ user-invocable: false
 <!-- The Pragmatic Rust Guidelines are copyrighted (c) by Microsoft Corporation and licensed under the MIT license. -->
 This skill enforces structured, guideline-driven Rust development. It ensures all Rust code strictly follows the appropriate Microsoft-style rules, documentation formats, and quality constraints.
 
-
-
-
 ## Mandatory Workflow
 
 **This skill MUST be invoked for ANY Rust action**, including:
 - Creating new `.rs` files (even minimal examples like Hello World)
 - Modifying existing `.rs` files (any change, no matter how small)
 - Reviewing, refactoring, or rewriting Rust code
-
 
 ## Which guideline to read and when
 
@@ -112,7 +108,6 @@ Use when:
 - Managing error types and error handling patterns
 - Creating runtime abstractions and trait-based designs
 - Structuring crate organization and public interfaces
-
 
 ## Coding Rules
 

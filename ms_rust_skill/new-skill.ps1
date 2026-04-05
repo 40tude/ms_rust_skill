@@ -1,6 +1,24 @@
+[CmdletBinding()]
 param(
-    [string]$InputFile = ''
+    [string]$InputFile = '',
+    [switch]$Help
 )
+
+if ($Help) {
+    Write-Host @'
+USAGE
+  new-skill.ps1 [-InputFile <path>] [-Help] [-Verbose]
+
+  -InputFile  Path to source text file (default: in\all.txt)
+  -Help       Show this help message
+  -Verbose    Print extra diagnostic output
+
+DESCRIPTION
+  Splits all.txt into numbered Markdown files under ms-rust\,
+  applies tag conversions and image-to-text patches, then copies SKILL.md.
+'@
+    exit 0
+}
 
 # Resolve paths relative to script location
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
@@ -10,15 +28,15 @@ if (-not $scriptDir) { $scriptDir = Get-Location }
 $inDir = Join-Path $scriptDir 'in'
 $outDir = Join-Path $scriptDir 'ms-rust'
 
-# ---------------------------------------------------------------------------
-# Image-to-text replacement rules
-# ---------------------------------------------------------------------------
+# ===========================================================================
+# CONFIGURATION -- image-to-text replacement rules
+# ===========================================================================
 # To add a new replacement in the future:
 #   1. Append a new hashtable to $ImageReplacements below.
 #   2. Set File to the exact output filename (e.g. '03_documentation.md').
 #   3. Set Old to the exact text to find (use @'...'@ for multi-line).
 #   4. Set New to the replacement text   (use @'...'@ for multi-line).
-# ---------------------------------------------------------------------------
+# ===========================================================================
 $ImageReplacements = @(
     @{
         File = '10_libraries_interoperability_guidelines.md'
@@ -88,7 +106,11 @@ View -- A view over a configuration of type T, containing data for a specific co
     }
 )
 
-# Helper: produce a short relative path for nicer output
+# ===========================================================================
+# HELPER FUNCTIONS
+# ===========================================================================
+
+# Produce a short relative path for nicer output
 function Get-ShortPath([string]$path) {
     try {
         if ($null -ne $path -and $path.StartsWith($scriptDir)) {
@@ -133,6 +155,37 @@ function Invoke-ImageReplacements {
     }
 }
 
+function ConvertFrom-WhyTag([string]$text) {
+    return [System.Text.RegularExpressions.Regex]::Replace(
+        $text,
+        '<why>(.*?)</why>',
+        'Why this version exists: $1',
+        [System.Text.RegularExpressions.RegexOptions]::Singleline
+    )
+}
+
+function ConvertFrom-VersionTag([string]$text) {
+    return [System.Text.RegularExpressions.Regex]::Replace(
+        $text,
+        '<version>([\d.]+)</version>',
+        'Version: $1'
+    )
+}
+
+# Removes mdBook anchor suffixes of the form: (xxx) { #xxx }
+# Spaces inside parentheses/braces are tolerated; the id must match the label.
+function Remove-AnchorSuffix([string]$text) {
+    return [System.Text.RegularExpressions.Regex]::Replace(
+        $text,
+        '\(\s*(\S+?)\s*\)\s*\{\s*#\1\s*\}'
+        ,''
+    )
+}
+
+# ===========================================================================
+# MAIN -- entry point
+# ===========================================================================
+
 # Determine input path
 if (-not $InputFile) {
     $inputPath = Join-Path $inDir 'all.txt'
@@ -173,40 +226,21 @@ if (Test-Path $outDir) {
     }
 }
 else {
-    New-Item -Path $outDir -ItemType Directory | Out-Null
-}
-
-function ConvertFrom-WhyTag([string]$text) {
-    return [System.Text.RegularExpressions.Regex]::Replace(
-        $text,
-        '<why>(.*?)</why>',
-        'Why this version exists: $1',
-        [System.Text.RegularExpressions.RegexOptions]::Singleline
-    )
-}
-
-function ConvertFrom-VersionTag([string]$text) {
-    return [System.Text.RegularExpressions.Regex]::Replace(
-        $text,
-        '<version>([\d.]+)</version>',
-        'Version: $1'
-    )
-}
-
-# Removes mdBook anchor suffixes of the form: (xxx) { #xxx }
-# Spaces inside parentheses/braces are tolerated; the id must match the label.
-function Remove-AnchorSuffix([string]$text) {
-    return [System.Text.RegularExpressions.Regex]::Replace(
-        $text,
-        '\(\s*(\S+?)\s*\)\s*\{\s*#\1\s*\}'
-        ,''
-    )
+    try {
+        New-Item -Path $outDir -ItemType Directory -ErrorAction Stop | Out-Null
+    } catch {
+        Write-Error "Cannot create output directory '$outDir': $_"
+        exit 1
+    }
 }
 
 $content = Get-Content -Raw -LiteralPath $inputPath -ErrorAction Stop
 $content = ConvertFrom-WhyTag $content
+Write-Verbose "Applied ConvertFrom-WhyTag"
 $content = ConvertFrom-VersionTag $content
+Write-Verbose "Applied ConvertFrom-VersionTag"
 $content = Remove-AnchorSuffix $content
+Write-Verbose "Applied Remove-AnchorSuffix"
 $lines = [System.Text.RegularExpressions.Regex]::Split($content, "\r?\n")
 
 # Find separator lines that start with three dashes (pattern '^---')
@@ -249,7 +283,7 @@ for ($k = 0; $k -lt ($sepIndices.Count - 1); $k++) {
         $extractLines = $extractLines | Where-Object { -not ($_ -match '^---') }
 
         # Get title from first line
-        $titleLine = $extractLines[0] -replace '^[ \t]*#\s+', '' -replace '\s+$', ''
+        $titleLine = $extractLines[0] -replace '^[ \t]*#+\s+', '' -replace '\s+$', ''
         # Normalize and sanitize filename base:
         # - lowercase, trim
         # - replace one-or-more spaces or '/' by a single '_'
@@ -266,8 +300,16 @@ for ($k = 0; $k -lt ($sepIndices.Count - 1); $k++) {
         $outPath = Join-Path $outDir $outName
 
         # Write file (even if extractLines is empty, write an empty file)
-        if ($extractLines.Count -eq 0) { "" | Out-File -FilePath $outPath -Encoding UTF8 }
-        else { $extractLines | Out-File -FilePath $outPath -Encoding UTF8 }
+        try {
+            if ($extractLines.Count -eq 0) {
+                "" | Out-File -FilePath $outPath -Encoding UTF8 -ErrorAction Stop
+            } else {
+                $extractLines | Out-File -FilePath $outPath -Encoding UTF8 -ErrorAction Stop
+            }
+        } catch {
+            Write-Warning "Failed to write '$outName': $_"
+            continue
+        }
 
         $shortOut = Get-ShortPath $outPath
         Write-Host "Wrote: $shortOut"
