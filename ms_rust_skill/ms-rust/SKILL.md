@@ -1,6 +1,6 @@
 ---
 name: ms-rust
-description: ALWAYS invoke this skill BEFORE writing or modifying ANY Rust code (.rs files) even for simple Hello World programs. Enforces Microsoft-style Rust development discipline and requires consulting the appropriate guideline files before any coding activity. This skill is MANDATORY for all Rust development.
+description: ALWAYS invoke this skill BEFORE writing or modifying ANY Rust code (.rs files) or Cargo.toml, even for simple Hello World programs. Enforces Microsoft-style Rust development discipline and requires consulting the appropriate guideline files before any coding activity. This skill is MANDATORY for all Rust development.
 context: fork
 user-invocable: false
 ---
@@ -17,6 +17,7 @@ This skill enforces structured, guideline-driven Rust development. It ensures al
 - Creating new `.rs` files (even minimal examples like Hello World)
 - Modifying existing `.rs` files (any change, no matter how small)
 - Reviewing, refactoring, or rewriting Rust code
+- Modifying `Cargo.toml` (features, dependencies, crate structure)
 
 ## Which guideline to read and when
 
@@ -85,12 +86,14 @@ Use in **ALL Rust tasks**. This file defines:
 Use when:
 - Creating reusable library crates
 - Managing Cargo features and their additivity
+- Editing `Cargo.toml` features or dependency declarations
 - Building native `-sys` crates for C interoperability
 - Ensuring libraries work out-of-the-box on all platforms
 
 #### 10. `10_libraries_interoperability_guidelines.md`
 Use when:
 - Exposing public APIs and managing external dependencies
+- Adding third-party dependencies to `Cargo.toml`
 - Designing types for Send/Sync compatibility
 - Avoiding leaking third-party types from public APIs
 - Creating escape hatches for native handle interop
@@ -101,6 +104,7 @@ Use when:
 - Making I/O and system calls mockable for testing
 - Preventing glob re-exports and accidental leaks
 - Feature-gating test utilities and mocking functionality
+- Feature-gating entries in `Cargo.toml` (test utilities, optional deps)
 
 #### 12. `12_libraries_ux_guidelines.md`
 Use when:
