@@ -5,7 +5,7 @@ context: fork
 user-invocable: false
 ---
 
-**Current compliance date: 2026-02-16**
+**Current compliance date: 2026-04-05**
 
 # Rust Development Skill
 <!-- The Pragmatic Rust Guidelines are copyrighted (c) by Microsoft Corporation and licensed under the MIT license. -->
