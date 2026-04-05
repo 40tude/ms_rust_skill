@@ -2,10 +2,10 @@
 
 
 
-## Features are Additive  (M-FEATURES-ADDITIVE) { #M-FEATURES-ADDITIVE }
+## Features are Additive  
 
-<why>To prevent compilation breakage in large and complex projects.</why>
-<version>1.0</version>
+Why this version exists: To prevent compilation breakage in large and complex projects.
+Version: 1.0
 
 All library features must be additive, and any combination must work, as long as the feature itself would work on the current platform. This implies:
 
@@ -22,10 +22,10 @@ Further Reading
 
 
 
-## Libraries Work Out of the Box (M-OOBE) { #M-OOBE }
+## Libraries Work Out of the Box 
 
-<why>To be easily adoptable by the Rust ecosystem.</why>
-<version>1.0</version>
+Why this version exists: To be easily adoptable by the Rust ecosystem.
+Version: 1.0
 
 Libraries must _just work_ on all supported platforms, with the exception of libraries that are expressly platform or target specific.
 
@@ -89,10 +89,10 @@ If a dependency is known to be platform specific, the parent must use conditiona
 
 
 
-## Native `-sys` Crates Compile Without Dependencies (M-SYS-CRATES) { #M-SYS-CRATES }
+## Native `-sys` Crates Compile Without Dependencies 
 
-<why>To have libraries that 'just work' on all platforms.</why>
-<version>0.2</version>
+Why this version exists: To have libraries that 'just work' on all platforms.
+Version: 0.2
 
 If you author a pair of `foo` and `foo-sys` crates wrapping a native `foo.lib`, you are likely to run into the issues described
 in [M-OOBE].

@@ -176,7 +176,37 @@ else {
     New-Item -Path $outDir -ItemType Directory | Out-Null
 }
 
+function ConvertFrom-WhyTag([string]$text) {
+    return [System.Text.RegularExpressions.Regex]::Replace(
+        $text,
+        '<why>(.*?)</why>',
+        'Why this version exists: $1',
+        [System.Text.RegularExpressions.RegexOptions]::Singleline
+    )
+}
+
+function ConvertFrom-VersionTag([string]$text) {
+    return [System.Text.RegularExpressions.Regex]::Replace(
+        $text,
+        '<version>([\d.]+)</version>',
+        'Version: $1'
+    )
+}
+
+# Removes mdBook anchor suffixes of the form: (xxx) { #xxx }
+# Spaces inside parentheses/braces are tolerated; the id must match the label.
+function Remove-AnchorSuffix([string]$text) {
+    return [System.Text.RegularExpressions.Regex]::Replace(
+        $text,
+        '\(\s*(\S+?)\s*\)\s*\{\s*#\1\s*\}'
+        ,''
+    )
+}
+
 $content = Get-Content -Raw -LiteralPath $inputPath -ErrorAction Stop
+$content = ConvertFrom-WhyTag $content
+$content = ConvertFrom-VersionTag $content
+$content = Remove-AnchorSuffix $content
 $lines = [System.Text.RegularExpressions.Regex]::Split($content, "\r?\n")
 
 # Find separator lines that start with three dashes (pattern '^---')

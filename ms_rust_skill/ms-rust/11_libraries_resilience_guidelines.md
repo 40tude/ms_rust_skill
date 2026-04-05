@@ -2,10 +2,10 @@
 
 
 
-## Avoid Statics (M-AVOID-STATICS) { #M-AVOID-STATICS }
+## Avoid Statics 
 
-<why>To prevent consistency and correctness issues between crate versions.</why>
-<version>1.0</version>
+Why this version exists: To prevent consistency and correctness issues between crate versions.
+Version: 1.0
 
 Libraries should avoid `static` and thread-local items, if a consistent view of the item is relevant for correctness.
 Essentially, any code that would be incorrect if the static _magically_ had another value must not use them. Statics
@@ -65,10 +65,10 @@ thread-per-core designs.
 
 
 
-## I/O and System Calls Are Mockable (M-MOCKABLE-SYSCALLS) { #M-MOCKABLE-SYSCALLS }
+## I/O and System Calls Are Mockable 
 
-<why>To make otherwise hard-to-evoke edge cases testable.</why>
-<version>0.2</version>
+Why this version exists: To make otherwise hard-to-evoke edge cases testable.
+Version: 0.2
 
 Any user-facing type doing I/O, or sys calls with side effects, should be mockable to these effects. This includes file and
 network access, clocks, entropy sources and seeds, and similar. More generally, any operation that is
@@ -192,10 +192,10 @@ impl Library {
 
 
 
-## Don't Glob Re-Export Items (M-NO-GLOB-REEXPORTS) { #M-NO-GLOB-REEXPORTS }
+## Don't Glob Re-Export Items 
 
-<why>To prevent accidentally leaking unintended types.</why>
-<version>1.0</version>
+Why this version exists: To prevent accidentally leaking unintended types.
+Version: 1.0
 
 Don't `pub use foo::*` from other modules, especially not from other crates. You might accidentally export more than you want,
 and globs are hard to review in PRs. Re-export items individually instead:
@@ -226,10 +226,10 @@ pub use linux::*;
 
 
 
-## Use the Proper Type Family (M-STRONG-TYPES) { #M-STRONG-TYPES }
+## Use the Proper Type Family 
 
-<why>To have and maintain the right data and safety variants, at the right time.</why>
-<version>1.0</version>
+Why this version exists: To have and maintain the right data and safety variants, at the right time.
+Version: 1.0
 
 Use the appropriate `std` type for your task. In general you should use the strongest type available, as early as possible in your API flow. Common offenders are
 
@@ -248,10 +248,10 @@ be regular numbers, not `Saturating<usize>`, `NonZero<usize>`, or similar.
 
 
 
-## Test Utilities are Feature Gated (M-TEST-UTIL) { #M-TEST-UTIL }
+## Test Utilities are Feature Gated 
 
-<why>To prevent production builds from accidentally bypassing safety checks.</why>
-<version>0.2</version>
+Why this version exists: To prevent production builds from accidentally bypassing safety checks.
+Version: 0.2
 
 Testing functionality must be guarded behind a feature flag. This includes
 

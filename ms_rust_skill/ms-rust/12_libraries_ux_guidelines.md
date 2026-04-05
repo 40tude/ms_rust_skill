@@ -2,10 +2,10 @@
 
 
 
-## Avoid Smart Pointers and Wrappers in APIs (M-AVOID-WRAPPERS) { #M-AVOID-WRAPPERS }
+## Avoid Smart Pointers and Wrappers in APIs 
 
-<why>To reduce cognitive load and improve API ergonomics.</why>
-<version>1.0</version>
+Why this version exists: To reduce cognitive load and improve API ergonomics.
+Version: 1.0
 
 As a specialization of [M-ABSTRACTIONS-DONT-NEST], generic wrappers and smart pointers like
 `Rc<T>`, `Arc<T>`, `Box<T>`, or `RefCell<T>` should be avoided in public APIs.
@@ -35,10 +35,10 @@ Smart pointers in APIs are acceptable when:
 
 
 
-## Prefer Types over Generics, Generics over Dyn Traits (M-DI-HIERARCHY) { #M-DI-HIERARCHY }
+## Prefer Types over Generics, Generics over Dyn Traits 
 
-<why>To prevent patterns that don't compose, and design lock-in.</why>
-<version>0.1</version>
+Why this version exists: To prevent patterns that don't compose, and design lock-in.
+Version: 0.1
 
 When asking for async dependencies, prefer concrete types over generics, and generics over `dyn Trait`.
 
@@ -124,10 +124,10 @@ async fn read_database(x: &DataAccess) { ... }
 
 
 
-## Error are Canonical Structs (M-ERRORS-CANONICAL-STRUCTS) { #M-ERRORS-CANONICAL-STRUCTS }
+## Error are Canonical Structs 
 
-<why>To harmonize the behavior of error types, and provide a consistent error handling.</why>
-<version>1.0</version>
+Why this version exists: To harmonize the behavior of error types, and provide a consistent error handling.
+Version: 1.0
 
 Errors should be a situation-specific `struct` that contain a [`Backtrace`](https://doc.rust-lang.org/stable/std/backtrace/struct.Backtrace.html),
 a possible upstream error cause, and helper methods.
@@ -247,10 +247,10 @@ Lastly, if you happen to emit lots of errors from your crate, consider creating 
 
 
 
-## Essential Functionality Should be Inherent (M-ESSENTIAL-FN-INHERENT) { #M-ESSENTIAL-FN-INHERENT }
+## Essential Functionality Should be Inherent 
 
-<why>To make essential functionality easily discoverable.</why>
-<version>1.0</version>
+Why this version exists: To make essential functionality easily discoverable.
+Version: 1.0
 
 Types should implement core functionality inherently. Trait implementations should forward to inherent functions, and not replace them. Instead of this
 
@@ -294,10 +294,10 @@ impl Download for HttpClient {
 
 
 
-## Accept `impl AsRef<>` Where Feasible (M-IMPL-ASREF) { #M-IMPL-ASREF }
+## Accept `impl AsRef<>` Where Feasible 
 
-<why>To give users flexibility calling in with their own types.</why>
-<version>1.0</version>
+Why this version exists: To give users flexibility calling in with their own types.
+Version: 1.0
 
 In **function** signatures, accept `impl AsRef<T>` for types that have a
 [clear reference hierarchy](https://doc.rust-lang.org/stable/std/convert/trait.AsRef.html#implementors), where you
@@ -342,10 +342,10 @@ struct User {
 
 
 
-## Accept `impl 'IO'` Where Feasible ('Sans IO') (M-IMPL-IO) { #M-IMPL-IO }
+## Accept `impl 'IO'` Where Feasible ('Sans IO') 
 
-<why>To untangle business logic from I/O logic, and have N*M composability.</why>
-<version>0.1</version>
+Why this version exists: To untangle business logic from I/O logic, and have N*M composability.
+Version: 0.1
 
 Functions and types that only need to perform one-shot I/O during initialization should be written "[sans-io](https://www.firezone.dev/blog/sans-io)",
 and accept some `impl T`, where `T` is the appropriate I/O trait, effectively outsourcing I/O work to another type:
@@ -376,10 +376,10 @@ _Types_ that need to perform runtime-specific, continuous I/O should follow [M-R
 
 
 
-## Accept `impl RangeBounds<>` Where Feasible (M-IMPL-RANGEBOUNDS) { #M-IMPL-RANGEBOUNDS }
+## Accept `impl RangeBounds<>` Where Feasible 
 
-<why>To give users flexibility and clarity when specifying ranges.</why>
-<version>1.0</version>
+Why this version exists: To give users flexibility and clarity when specifying ranges.
+Version: 1.0
 
 Functions that accept a range of numbers must use a `Range` type or trait over hand-rolled parameters:
 
@@ -405,10 +405,10 @@ fn select_any(r: impl RangeBounds<usize>) {}
 
 
 
-## Complex Type Construction has Builders (M-INIT-BUILDER) { #M-INIT-BUILDER }
+## Complex Type Construction has Builders 
 
-<why>To future-proof type construction in complex scenarios.</why>
-<version>0.3</version>
+Why this version exists: To future-proof type construction in complex scenarios.
+Version: 0.3
 
 Types that could support 4 or more arbitrary initialization permutations should provide builders. In other words, types with up to
 2 optional initialization parameters can be constructed via inherent methods:
@@ -533,10 +533,10 @@ builder methods follow the pattern `builder_{runtime}(deps)` where `{runtime}` i
 
 
 
-## Complex Type Initialization Hierarchies are Cascaded (M-INIT-CASCADED) { #M-INIT-CASCADED }
+## Complex Type Initialization Hierarchies are Cascaded 
 
-<why>To prevent misuse and accidental parameter mix ups.</why>
-<version>1.0</version>
+Why this version exists: To prevent misuse and accidental parameter mix ups.
+Version: 1.0
 
 Types that require 4+ parameters should cascade their initialization via helper types.
 
@@ -570,10 +570,10 @@ impl Account {
 
 
 
-## Services are Clone (M-SERVICES-CLONE) { #M-SERVICES-CLONE }
+## Services are Clone 
 
-<why>To avoid composability issues when sharing common services.</why>
-<version>1.0</version>
+Why this version exists: To avoid composability issues when sharing common services.
+Version: 1.0
 
 Heavyweight _service_ types and 'thread singletons' should implement shared-ownership `Clone` semantics, including any type you expect to be used from your `Application::init`.
 
@@ -631,10 +631,10 @@ impl ServiceCommon {
 
 
 
-## Abstractions Don't Visibly Nest (M-SIMPLE-ABSTRACTIONS) { #M-SIMPLE-ABSTRACTIONS }
+## Abstractions Don't Visibly Nest 
 
-<why>To prevent cognitive load and a bad out of the box UX.</why>
-<version>0.1</version>
+Why this version exists: To prevent cognitive load and a bad out of the box UX.
+Version: 0.1
 
 When designing your public types and primary API surface, avoid exposing nested or complex parametrized types to your users.
 

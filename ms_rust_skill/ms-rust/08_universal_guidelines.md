@@ -2,10 +2,10 @@
 
 
 
-## Names are Free of Weasel Words (M-CONCISE-NAMES) { #M-CONCISE-NAMES }
+## Names are Free of Weasel Words 
 
-<why>To improve readability.</why>
-<version>1.0</version>
+Why this version exists: To improve readability.
+Version: 1.0
 
 Symbol names, especially types and traits names, should be free of weasel words that do not meaningfully
 add information. Common offenders include `Service`, `Manager`, and `Factory`. For example:
@@ -30,10 +30,10 @@ around optional values (again, [M-INIT-BUILDER](../libs/ux/#M-INIT-BUILDER)).
 
 
 
-## Magic Values are Documented (M-DOCUMENTED-MAGIC) { #M-DOCUMENTED-MAGIC }
+## Magic Values are Documented 
 
-<why>To ensure maintainability and prevent misunderstandings when refactoring.</why>
-<version>1.0</version>
+Why this version exists: To ensure maintainability and prevent misunderstandings when refactoring.
+Version: 1.0
 
 Hardcoded _magic_ values in production code must be accompanied by a comment. The comment should outline:
 
@@ -66,10 +66,10 @@ const UPSTREAM_SERVER_TIMEOUT: Duration = Duration::from_secs(60 * 60 * 24);
 
 
 
-## Lint Overrides Should Use `#[expect]` (M-LINT-OVERRIDE-EXPECT) { #M-LINT-OVERRIDE-EXPECT }
+## Lint Overrides Should Use `#[expect]` 
 
-<why>To prevent the accumulation of outdated lints.</why>
-<version>1.0</version>
+Why this version exists: To prevent the accumulation of outdated lints.
+Version: 1.0
 
 When overriding project-global lints inside a submodule or item, you should do so via `#[expect]`, not `#[allow]`.
 
@@ -87,10 +87,10 @@ pub async fn ping_server() {
 
 
 
-## Use Structured Logging with Message Templates (M-LOG-STRUCTURED) { #M-LOG-STRUCTURED }
+## Use Structured Logging with Message Templates 
 
-<why>To minimize the cost of logging and to improve filtering capabilities.</why>
-<version>0.1</version>
+Why this version exists: To minimize the cost of logging and to improve filtering capabilities.
+Version: 0.1
 
 Logging should use structured events with named properties and message templates following
 the [message templates](https://messagetemplates.org/) specification.
@@ -204,10 +204,10 @@ file contents with PII, temporary file paths with session IDs and more. Consider
 
 
 
-## Panic Means 'Stop the Program' (M-PANIC-IS-STOP) { #M-PANIC-IS-STOP }
+## Panic Means 'Stop the Program' 
 
-<why>To ensure soundness and predictability.</why>
-<version>1.0</version>
+Why this version exists: To ensure soundness and predictability.
+Version: 1.0
 
 Panics are not exceptions. Instead, they suggest immediate program termination.
 
@@ -236,10 +236,10 @@ Any of those are directly or indirectly linked to programming errors.
 
 
 
-## Detected Programming Bugs are Panics, Not Errors (M-PANIC-ON-BUG) { #M-PANIC-ON-BUG }
+## Detected Programming Bugs are Panics, Not Errors 
 
-<why>To avoid impossible error handling code and ensure runtime consistency.</why>
-<version>1.0</version>
+Why this version exists: To avoid impossible error handling code and ensure runtime consistency.
+Version: 1.0
 
 As an extension of [M-PANIC-IS-STOP] above, when an unrecoverable programming error has been
 detected, libraries and applications must panic, i.e., request program termination.
@@ -281,10 +281,10 @@ fn parse_uri(s: &str) -> Result<Uri, ParseError> { };
 
 
 
-## Public Types are Debug (M-PUBLIC-DEBUG) { #M-PUBLIC-DEBUG }
+## Public Types are Debug 
 
-<why>To simplify debugging and prevent leaking sensitive data.</why>
-<version>1.0</version>
+Why this version exists: To simplify debugging and prevent leaking sensitive data.
+Version: 1.0
 
 All public types exposed by a crate should implement `Debug`. Most types can do so via `#[derive(Debug)]`:
 
@@ -320,10 +320,10 @@ fn test() {
 
 
 
-## Public Types Meant to be Read are Display (M-PUBLIC-DISPLAY) { #M-PUBLIC-DISPLAY }
+## Public Types Meant to be Read are Display 
 
-<why>To improve usability.</why>
-<version>1.0</version>
+Why this version exists: To improve usability.
+Version: 1.0
 
 If your type is expected to be read by upstream consumers, be it developers or end users, it should implement `Display`. This in particular includes:
 
@@ -337,10 +337,10 @@ The handling of sensitive data outlined in [M-PUBLIC-DEBUG] applies analogously.
 
 
 
-## Prefer Regular over Associated Functions (M-REGULAR-FN) { #M-REGULAR-FN }
+## Prefer Regular over Associated Functions 
 
-<why>To improve readability.</why>
-<version>1.0</version>
+Why this version exists: To improve readability.
+Version: 1.0
 
 Associated functions should primarily be used for instance creation, not general purpose computation.
 
@@ -383,10 +383,10 @@ impl Default for Foo {
 
 
 
-## If in Doubt, Split the Crate (M-SMALLER-CRATES) { #M-SMALLER-CRATES }
+## If in Doubt, Split the Crate 
 
-<why>To improve compile times and modularity.</why>
-<version>1.0</version>
+Why this version exists: To improve compile times and modularity.
+Version: 1.0
 
 You should err on the side of having too many crates rather than too few, as this leads to dramatic compile time improvements—especially
 during the development of these crates—and prevents cyclic component dependencies.
@@ -423,10 +423,10 @@ Functionality split for technical reasons (e.g., a `foo_proc` proc macro crate) 
 
 
 
-## Use Static Verification (M-STATIC-VERIFICATION) { #M-STATIC-VERIFICATION }
+## Use Static Verification 
 
-<why>To ensure consistency and avoid common issues.</why>
-<version>1.0</version>
+Why this version exists: To ensure consistency and avoid common issues.
+Version: 1.0
 
 Projects should use the following static verification tools to help maintain the quality of the code. These tools can be
 configured to run on a developer's machine during normal work, and should be used as part of check-in gates.
@@ -505,10 +505,10 @@ literal_string_with_formatting_args = "allow"
 
 
 
-## Follow the Upstream Guidelines (M-UPSTREAM-GUIDELINES) { #M-UPSTREAM-GUIDELINES }
+## Follow the Upstream Guidelines 
 
-<why>To avoid repeating mistakes the community has already learned from, and to have a codebase that does not surprise users and contributors.</why>
-<version>1.0</version>
+Why this version exists: To avoid repeating mistakes the community has already learned from, and to have a codebase that does not surprise users and contributors.
+Version: 1.0
 
 The guidelines in this book complement existing Rust guidelines, in particular:
 

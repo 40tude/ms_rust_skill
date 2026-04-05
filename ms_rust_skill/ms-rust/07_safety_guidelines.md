@@ -2,10 +2,10 @@
 
 
 
-## Unsafe Implies Undefined Behavior (M-UNSAFE-IMPLIES-UB) { #M-UNSAFE-IMPLIES-UB }
+## Unsafe Implies Undefined Behavior 
 
-<why>To ensure semantic consistency and prevent warning fatigue.</why>
-<version>1.0</version>
+Why this version exists: To ensure semantic consistency and prevent warning fatigue.
+Version: 1.0
 
 The marker `unsafe` may only be applied to functions and traits if misuse implies the risk of undefined behavior (UB).
 It must not be used to mark functions that are dangerous to call for other reasons.
@@ -20,10 +20,10 @@ unsafe fn delete_database() { }
 
 
 
-## Unsafe Needs Reason, Should be Avoided (M-UNSAFE) { #M-UNSAFE }
+## Unsafe Needs Reason, Should be Avoided 
 
-<why>To prevent undefined behavior, attack surface, and similar 'happy little accidents'.</why>
-<version>0.2</version>
+Why this version exists: To prevent undefined behavior, attack surface, and similar 'happy little accidents'.
+Version: 0.2
 
 You must have a valid reason to use `unsafe`. The only valid reasons are
 
@@ -79,10 +79,10 @@ In any case, `unsafe` must follow the guidelines outlined below.
 
 
 
-## All Code Must be Sound (M-UNSOUND) { #M-UNSOUND }
+## All Code Must be Sound 
 
-<why>To prevent unexpected runtime behavior, leading to potential bugs and incompatibilities.</why>
-<version>1.0</version>
+Why this version exists: To prevent unexpected runtime behavior, leading to potential bugs and incompatibilities.
+Version: 1.0
 
 Unsound code is seemingly _safe_ code that may produce undefined behavior when called from other safe code, or on its own accord.
 

@@ -2,10 +2,10 @@
 
 
 
-## Documentation Has Canonical Sections (M-CANONICAL-DOCS) { #M-CANONICAL-DOCS }
+## Documentation Has Canonical Sections 
 
-<why>To follow established and expected Rust best practices.</why>
-<version>1.0</version>
+Why this version exists: To follow established and expected Rust best practices.
+Version: 1.0
 
 Public library items must contain the canonical doc sections. The summary sentence must always be present. Extended documentation and examples
 are strongly encouraged. The other sections must be present when applicable.
@@ -57,10 +57,10 @@ fn copy(src: File, dst: File) {}
 
 
 
-## Mark `pub use` Items with `#[doc(inline)]` (M-DOC-INLINE) { #M-DOC-INLINE }
+## Mark `pub use` Items with `#[doc(inline)]` 
 
-<why>To make re-exported items 'fit in' with their non re-exported siblings.</why>
-<version>1.0</version>
+Why this version exists: To make re-exported items 'fit in' with their non re-exported siblings.
+Version: 1.0
 
 When publicly re-exporting crate items via `pub use foo::Foo` or `pub use foo::*`, they show up in an opaque re-export block. In most cases, this is not
 helpful to the reader:
@@ -98,10 +98,10 @@ This does not apply to `std` or 3rd party types; these should always be re-expor
 
 
 
-## First Sentence is One Line; Approx. 15 Words (M-FIRST-DOC-SENTENCE) { #M-FIRST-DOC-SENTENCE }
+## First Sentence is One Line; Approx. 15 Words 
 
-<why>To make API docs easily skimmable.</why>
-<version>1.0</version>
+Why this version exists: To make API docs easily skimmable.
+Version: 1.0
 
 When you document your item, the first sentence becomes the "summary sentence" that is extracted and shown in the module summary:
 
@@ -148,10 +148,10 @@ As a rule of thumb, the first sentence should not exceed **15 words**.
 
 
 
-## Has Comprehensive Module Documentation (M-MODULE-DOCS) { #M-MODULE-DOCS }
+## Has Comprehensive Module Documentation 
 
-<why>To allow for better API docs navigation.</why>
-<version>1.1</version>
+Why this version exists: To allow for better API docs navigation.
+Version: 1.1
 
 Any public library module must have `//!` module documentation, and the first sentence must follow [M-DOC-FIRST-SENTENCE].
 

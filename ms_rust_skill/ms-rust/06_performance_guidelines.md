@@ -2,10 +2,10 @@
 
 
 
-## Identify, Profile, Optimize the Hot Path Early (M-HOTPATH) { #M-HOTPATH }
+## Identify, Profile, Optimize the Hot Path Early 
 
-<why>To end up with high performance code.</why>
-<version>0.1</version>
+Why this version exists: To end up with high performance code.
+Version: 0.1
 
 You should, early in the development process, identify if your crate is performance or COGS relevant. If it is:
 
@@ -47,10 +47,10 @@ sharing screenshots of your latest profiling hot spots.
 
 
 
-## Optimize for Throughput, Avoid Empty Cycles (M-THROUGHPUT) { #M-THROUGHPUT }
+## Optimize for Throughput, Avoid Empty Cycles 
 
-<why>To ensure COGS savings at scale.</why>
-<version>0.1</version>
+Why this version exists: To ensure COGS savings at scale.
+Version: 0.1
 
 You should optimize your library for throughput, and one of your key metrics should be _items per CPU cycle_.
 
@@ -79,10 +79,10 @@ Shared state should only be used if the cost of sharing is less than the cost of
 
 
 
-## Long-Running Tasks Should Have Yield Points. (M-YIELD-POINTS) { #M-YIELD-POINTS }
+## Long-Running Tasks Should Have Yield Points. 
 
-<why>To ensure you don't starve other tasks of CPU time.</why>
-<version>0.2</version>
+Why this version exists: To ensure you don't starve other tasks of CPU time.
+Version: 0.2
 
 If you perform long running computations, they should contain `yield_now().await` points.
 

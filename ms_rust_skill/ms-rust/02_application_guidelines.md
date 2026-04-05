@@ -2,10 +2,10 @@
 
 
 
-## Applications may use Anyhow or Derivatives (M-APP-ERROR) { #M-APP-ERROR }
+## Applications may use Anyhow or Derivatives 
 
-<why>To simplify application-level error handling.</why>
-<version>0.1</version>
+Why this version exists: To simplify application-level error handling.
+Version: 0.1
 
 > Note, this guideline is primarily a relaxation and clarification of [M-ERRORS-CANONICAL-STRUCTS].
 
@@ -34,10 +34,10 @@ Libraries (crates used by more than one crate) should always follow [M-ERRORS-CA
 
 
 
-## Use Mimalloc for Apps (M-MIMALLOC-APPS) { #M-MIMALLOC-APPS }
+## Use Mimalloc for Apps 
 
-<why>To get significant performance for free.</why>
-<version>0.1</version>
+Why this version exists: To get significant performance for free.
+Version: 0.1
 
 Applications should set [mimalloc](https://crates.io/crates/mimalloc) as their global allocator. This usually results in notable performance
 increases along allocating hot paths; we have seen up to 25% benchmark improvements.

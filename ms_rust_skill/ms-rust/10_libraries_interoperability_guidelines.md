@@ -2,10 +2,10 @@
 
 
 
-## Don't Leak External Types (M-DONT-LEAK-TYPES) { #M-DONT-LEAK-TYPES }
+## Don't Leak External Types 
 
-<why>To prevent accidental breakage and long-term maintenance cost.</why>
-<version>0.1</version>
+Why this version exists: To prevent accidental breakage and long-term maintenance cost.
+Version: 0.1
 
 Where possible, you should prefer `std`<sup>1</sup> types in public APIs over types coming from external crates. Exceptions should be carefully considered.
 
@@ -34,10 +34,10 @@ expected to only interact with the umbrella, siblings may leak each others types
 
 
 
-## Native Escape Hatches (M-ESCAPE-HATCHES) { #M-ESCAPE-HATCHES }
+## Native Escape Hatches 
 
-<why>To allow users to work around unsupported use cases until alternatives are available.</why>
-<version>0.1</version>
+Why this version exists: To allow users to work around unsupported use cases until alternatives are available.
+Version: 0.1
 
 Types wrapping native handles should provide `unsafe` escape hatches. In interop scenarios your users might have gotten a native handle from somewhere
 else, or they might have to pass your wrapped handle over FFI. To enable these use cases you should provide `unsafe` conversion methods.
@@ -68,10 +68,10 @@ impl Handle {
 
 
 
-## Types are Send (M-TYPES-SEND) { #M-TYPES-SEND }
+## Types are Send 
 
-<why>To enable the use of types in Tokio and behind runtime abstractions</why>
-<version>1.0</version>
+Why this version exists: To enable the use of types in Tokio and behind runtime abstractions
+Version: 1.0
 
 Public types should be `Send` for compatibility reasons:
 
