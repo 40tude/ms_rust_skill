@@ -75,7 +75,6 @@ You should not:
 
 Shared state should only be used if the cost of sharing is less than the cost of re-computation.
 
-[M-YIELD-POINTS]: ./#M-YIELD-POINTS
 
 
 

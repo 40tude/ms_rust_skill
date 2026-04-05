@@ -238,6 +238,28 @@ function Remove-RelativeLinks([string]$text) {
     return $result
 }
 
+# Removes markdown reference-style link definitions -- lines of the form:
+#   [IDENTIFIER]: url-or-path
+#
+# These are definition entries that give a URL to a label used elsewhere as [LABEL]
+# or [text][LABEL]. Since Claude cannot follow links, they carry no value.
+#
+# Covered patterns (examples from the guideline sources):
+#   [M-PUBLIC-DEBUG]: ./#M-PUBLIC-DEBUG          -- Microsoft guideline anchors (M- prefix)
+#   [M-RUNTIME-ABSTRACTED]: ../ux/#M-RUNTIME-... -- same, cross-file relative paths
+#   [C-NEWTYPE]: https://rust-lang.github.io/...  -- Rust API Guidelines refs (C- prefix)
+#
+# The regex matches any line whose first non-space token is [UPPERCASE-IDENTIFIER]:
+# This intentionally covers both M- and C- prefixes (and any future uppercase-id refs).
+function Remove-RefLinkDefs([string]$text) {
+    return [System.Text.RegularExpressions.Regex]::Replace(
+        $text,
+        '^\s*\[[A-Z][A-Z0-9-]+\]:.*$',
+        '',
+        [System.Text.RegularExpressions.RegexOptions]::Multiline
+    )
+}
+
 # ===========================================================================
 # MAIN -- entry point
 # ===========================================================================
@@ -302,6 +324,8 @@ $content = Remove-ExternalLinks $content
 Write-Verbose "Applied Remove-ExternalLinks"
 $content = Remove-RelativeLinks $content
 Write-Verbose "Applied Remove-RelativeLinks"
+$content = Remove-RefLinkDefs $content
+Write-Verbose "Applied Remove-RefLinkDefs"
 $lines = [System.Text.RegularExpressions.Regex]::Split($content, "\r?\n")
 
 # Find separator lines that start with three dashes (pattern '^---')

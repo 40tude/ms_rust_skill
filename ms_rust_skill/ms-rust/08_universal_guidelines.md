@@ -277,7 +277,6 @@ fn parse_uri(s: &str) -> Result<Uri, ParseError> { };
 > For any user input or calling sequence that would otherwise panic, you should also explore if you can use the type
 > system to avoid panicking code paths altogether.
 
-[M-PANIC-IS-STOP]: ../universal/#M-PANIC-IS-STOP
 
 
 
@@ -333,7 +332,6 @@ If your type is expected to be read by upstream consumers, be it developers or e
 Implementations of `Display` should follow Rust customs; this includes rendering newlines and escape sequences.
 The handling of sensitive data outlined in [M-PUBLIC-DEBUG] applies analogously.
 
-[M-PUBLIC-DEBUG]: ./#M-PUBLIC-DEBUG
 
 
 

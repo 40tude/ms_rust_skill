@@ -31,7 +31,6 @@ Smart pointers in APIs are acceptable when:
 
 - The smart pointer, based on benchmarks, significantly improves performance and the complexity is justified.
 
-[M-ABSTRACTIONS-DONT-NEST]: ./#M-ABSTRACTIONS-DONT-NEST
 
 
 
@@ -118,9 +117,8 @@ enum DataAccess {
 async fn read_database(x: &DataAccess) { ... }
 ```
 
-[M-AVOID-WRAPPERS]: ./#M-AVOID-WRAPPERS
-[M-MOCKABLE-SYSCALLS]: ../resilience/#M-MOCKABLE-SYSCALLS
-[M-ABSTRACTIONS-DONT-NEST]: ./#M-ABSTRACTIONS-DONT-NEST
+
+
 
 
 
@@ -372,7 +370,6 @@ Synchronous functions should use `std::io::Read` and
 `futures::io::AsyncRead` and similar.
 _Types_ that need to perform runtime-specific, continuous I/O should follow [M-RUNTIME-ABSTRACTED] instead.
 
-[M-RUNTIME-ABSTRACTED]: ./#M-RUNTIME-ABSTRACTED
 
 
 
@@ -566,7 +563,6 @@ impl Account {
 }
 ```
 
-[C-NEWTYPE]: https://rust-lang.github.io/api-guidelines/type-safety.html#c-newtype
 
 
 

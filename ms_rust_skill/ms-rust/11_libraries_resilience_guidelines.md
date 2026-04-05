@@ -188,7 +188,6 @@ impl Library {
 }
 ```
 
-[M-RUNTIME-ABSTRACTED]: ../ux/#M-RUNTIME-ABSTRACTED
 
 
 
@@ -271,6 +270,5 @@ impl HttpClient {
 }
 ```
 
-[M-MOCKABLE-SYSCALLS]: ./#M-MOCKABLE-SYSCALLS
 
 

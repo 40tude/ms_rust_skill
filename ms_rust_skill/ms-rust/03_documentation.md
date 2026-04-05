@@ -94,7 +94,6 @@ This does not apply to `std` or 3rd party types; these should always be re-expor
 >
 > The `#[doc(inline)]` trick above does not change [M-NO-GLOB-REEXPORTS]; you generally should not re-export items via wildcards.
 
-[M-NO-GLOB-REEXPORTS]: ../libs/resilience/#M-NO-GLOB-REEXPORTS
 
 
 
@@ -181,6 +180,5 @@ The rest of the module documentation should be comprehensive, i.e., cover the mo
 This does not mean every module should contain all of these items. But if there is something to say about the interaction of the contained types,
 their module documentation is the right place.
 
-[M-DOC-FIRST-SENTENCE]: ./#M-DOC-FIRST-SENTENCE
 
 
