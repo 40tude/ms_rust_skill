@@ -1,4 +1,4 @@
-# Universal Guidelines
+﻿# Universal Guidelines
 
 
 
@@ -444,12 +444,12 @@ should explicitly enable the following set of compiler lints:
 
 ```toml
 [lints.rust]
-ambiguous_negative_literals = "warn"
+# ambiguous_negative_literals = "warn" # not needed with edition 2024
 missing_debug_implementations = "warn"
-redundant_imports = "warn"
+# redundant_imports = "warn" # not needed with edition 2024
 redundant_lifetimes = "warn"
 trivial_numeric_casts = "warn"
-unsafe_op_in_unsafe_fn = "warn"
+# unsafe_op_in_unsafe_fn = "warn" # not needed with edition 2024
 unused_lifetimes = "warn"
 ```
 
@@ -462,7 +462,7 @@ Undesired lints (e.g., numeric casts) can be opted back out of on a case-by-case
 [lints.clippy]
 cargo = { level = "warn", priority = -1 }
 complexity = { level = "warn", priority = -1 }
-correctness = { level = "warn", priority = -1 }
+# correctness = { level = "warn", priority = -1 } # not needed with edition 2024
 pedantic = { level = "warn", priority = -1 }
 perf = { level = "warn", priority = -1 }
 style = { level = "warn", priority = -1 }
@@ -484,8 +484,8 @@ empty_structs_with_brackets = "warn"
 fn_to_numeric_cast_any = "warn"
 if_then_some_else_none = "warn"
 map_err_ignore = "warn"
-redundant_type_annotations = "warn"
-renamed_function_params = "warn"
+# redundant_type_annotations = "warn" # not needed with edition 2024
+# renamed_function_params = "warn" # not needed with edition 2024
 semicolon_outside_block = "warn"
 string_to_string = "warn"
 undocumented_unsafe_blocks = "warn"

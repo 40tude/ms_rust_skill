@@ -106,6 +106,16 @@ View -- A view over a configuration of type T, containing data for a specific co
     }
 )
 
+# Lines in 08_universal_guidelines.md superseded by Rust edition 2024
+$Edition2024Annotations = @(
+    'ambiguous_negative_literals = "warn"',
+    'redundant_imports = "warn"',
+    'unsafe_op_in_unsafe_fn = "warn"',
+    'correctness = { level = "warn", priority = -1 }',
+    'redundant_type_annotations = "warn"',
+    'renamed_function_params = "warn"'
+)
+
 # ===========================================================================
 # HELPER FUNCTIONS
 # ===========================================================================
@@ -260,6 +270,34 @@ function Remove-RefLinkDefs([string]$text) {
     )
 }
 
+# Comments out lint entries in 08_universal_guidelines.md not needed with edition 2024.
+function Invoke-Edition2024Annotations {
+    param([string]$targetDir)
+
+    $fileName = '08_universal_guidelines.md'
+    $filePath = Join-Path $targetDir $fileName
+    if (-not (Test-Path $filePath)) {
+        Write-Warning "Edition 2024 annotation target not found: $fileName -- skipping"
+        return
+    }
+
+    $raw = Get-Content -Raw -LiteralPath $filePath
+    $changed = $false
+
+    foreach ($lint in $Edition2024Annotations) {
+        $commented = "# $lint # not needed with edition 2024"
+        if ($raw.Contains($lint) -and (-not $raw.Contains($commented))) {
+            $raw = $raw.Replace($lint, $commented)
+            $changed = $true
+        }
+    }
+
+    if ($changed) {
+        [System.IO.File]::WriteAllText($filePath, $raw, [System.Text.Encoding]::UTF8)
+        Write-Host "  annotated: $fileName (edition 2024 comments added)"
+    }
+}
+
 # ===========================================================================
 # MAIN -- entry point
 # ===========================================================================
@@ -411,6 +449,11 @@ Write-Host "Done. Generated $(( $fileCounter - 1 )) file(s) in: $shortOutDir"
 Write-Host "Applying image-to-text replacements..."
 Invoke-ImageReplacements -targetDir $outDir
 Write-Host "Replacements done."
+
+# Apply edition 2024 annotations
+Write-Host "Applying edition 2024 annotations..."
+Invoke-Edition2024Annotations -targetDir $outDir
+Write-Host "Edition 2024 annotations done."
 
 # Copy SKILL.md from input directory to output directory, if present
 $skillSrc = Join-Path $inDir 'SKILL.md'
