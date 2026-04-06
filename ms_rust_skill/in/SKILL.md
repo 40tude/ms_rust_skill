@@ -27,56 +27,56 @@ When in doubt about which guidelines apply, load all candidates -- loading an ex
 
 ### Guidelines and when they apply
 
-#### 1. `01_ai_guidelines.md`
+#### 1. [01_ai_guidelines.md](01_ai_guidelines.md)
 Use when the Rust code involves:
 - AI agents and LLM-driven code generation
 - Making APIs easier for AI systems to use
 - Comprehensive documentation and detailed examples
 - Strong type systems that help AI avoid mistakes
 
-#### 2. `02_application_guidelines.md`
+#### 2. [02_application_guidelines.md](02_application_guidelines.md)
 Use when working on:
 - Application-level error handling with anyhow or eyre
 - CLI tools and desktop applications
 - Performance optimization using mimalloc allocator
 - User-facing features and initialization logic
 
-#### 3. `03_documentation.md`
+#### 3. [03_documentation.md](03_documentation.md)
 Use when:
 - Writing public API documentation and doc comments
 - Creating canonical documentation sections (Examples, Errors, Panics, Safety)
 - Structuring module-level documentation comprehensively
 - Re-exporting items and using #[doc(inline)] annotations
 
-#### 4. `04_ffi_guidelines.md`
+#### 4. [04_ffi_guidelines.md](04_ffi_guidelines.md)
 Use when:
 - Loading multiple Rust-based dynamic libraries (DLLs)
 - Creating FFI boundaries and interoperability layers
 - Sharing data between different Rust compilation artifacts
 - Dealing with portable vs non-portable data types across DLL boundaries
 
-#### 6. `06_performance_guidelines.md`
+#### 6. [06_performance_guidelines.md](06_performance_guidelines.md)
 Use when:
 - Identifying and profiling hot paths in your code
 - Optimizing for throughput and CPU cycle efficiency
 - Managing allocation patterns and memory usage
 - Implementing yield points in long-running async tasks
 
-#### 7. `07_safety_guidelines.md`
+#### 7. [07_safety_guidelines.md](07_safety_guidelines.md)
 Use when:
 - Writing unsafe code for novel abstractions, performance, or FFI
 - Ensuring code soundness and preventing undefined behavior
 - Documenting safety requirements and invariants
 - Reviewing unsafe blocks for correctness with Miri
 
-#### 8. `08_universal_guidelines.md`
+#### 8. [08_universal_guidelines.md](08_universal_guidelines.md)
 Use in **ALL Rust tasks**. This file defines:
 - General Rust best practices applicable to all code
 - Style, naming, and organizational conventions
 - Cross-cutting concerns that apply everywhere
 - Foundational principles for any Rust project
 
-#### 9. `09_libraries_building_guidelines.md`
+#### 9. [09_libraries_building_guidelines.md](09_libraries_building_guidelines.md)
 Use when:
 - Creating reusable library crates
 - Managing Cargo features and their additivity
@@ -84,7 +84,7 @@ Use when:
 - Building native `-sys` crates for C interoperability
 - Ensuring libraries work out-of-the-box on all platforms
 
-#### 10. `10_libraries_interoperability_guidelines.md`
+#### 10. [10_libraries_interoperability_guidelines.md](10_libraries_interoperability_guidelines.md)
 Use when:
 - Exposing public APIs and managing external dependencies
 - Adding third-party dependencies to `Cargo.toml`
@@ -92,7 +92,7 @@ Use when:
 - Avoiding leaking third-party types from public APIs
 - Creating escape hatches for native handle interop
 
-#### 11. `11_libraries_resilience_guidelines.md`
+#### 11. [11_libraries_resilience_guidelines.md](11_libraries_resilience_guidelines.md)
 Use when:
 - Avoiding statics and thread-local state in libraries
 - Making I/O and system calls mockable for testing
@@ -100,7 +100,7 @@ Use when:
 - Feature-gating test utilities and mocking functionality
 - Feature-gating entries in `Cargo.toml` (test utilities, optional deps)
 
-#### 12. `12_libraries_ux_guidelines.md`
+#### 12. [12_libraries_ux_guidelines.md](12_libraries_ux_guidelines.md)
 Use when:
 - Designing user-friendly library APIs
 - Managing error types and error handling patterns
@@ -109,7 +109,7 @@ Use when:
 
 ## Coding Rules
 
-1. **Load `08_universal_guidelines.md` FIRST, for every Rust task without exception.**
+1. **Load [08_universal_guidelines.md](08_universal_guidelines.md) FIRST, for every Rust task without exception.**
 2. Then load any additional guideline files relevant to the task (see "Which guideline to read and when" above).
 3. Apply the required rules from the relevant guidelines.
 4. Comments must ALWAYS be written in American English, unless the user explicitly requests ‘write comments in French’ or provides another clear instruction specifying a different comment language.
